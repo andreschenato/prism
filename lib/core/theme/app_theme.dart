@@ -2,42 +2,42 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Background
-  static const Color backgroundWhiteDark = Color(0xc5c6ccff);
-  static const Color backgroundWhiteMedium = Color(0xe9e9e9ff);
-  static const Color backgroundWhiteLight = Color(0xf5f5f5ff);
+  static const Color backgroundWhiteDark = Color.fromARGB(255, 197, 198, 204);
+  static const Color backgroundWhiteMedium = Color.fromARGB(255, 233, 233, 233);
+  static const Color backgroundWhiteLight = Color.fromARGB(255, 245, 245, 245);
 
-  static const Color backgroundBlackDark = Color(0x1A1A1AFF);
-  static const Color backgroundBlackMedium = Color(0x323232ff);
-  static const Color backgroundBlackLight = Color(0x707070ff);
+  static const Color backgroundBlackDark = Color.fromARGB(255, 26, 26, 26);
+  static const Color backgroundBlackMedium = Color.fromARGB(255, 50, 50, 50);
+  static const Color backgroundBlackLight = Color.fromARGB(255, 112, 112, 112);
 
   // Primary
-  static const Color primaryDark = Color(0x007bffff);
-  static const Color primaryMedium = Color(0x1b89ffff);
-  static const Color primaryLight = Color(0x60adffff);
-  static const Color primaryLightest = Color(0xe5f2ffff);
+  static const Color primaryDark = Color.fromARGB(255, 0, 123, 255);
+  static const Color primaryMedium = Color.fromARGB(255, 27, 127, 255);
+  static const Color primaryLight = Color.fromARGB(255, 96, 173, 255);
+  static const Color primaryLightest = Color.fromARGB(255, 229, 242, 255);
 
   // Secondary
-  static const Color secondaryDark = Color(0x8a2be2ff);
-  static const Color secondaryMedium = Color(0x9641e5ff);
-  static const Color secondaryLight = Color(0xb67becff);
+  static const Color secondaryDark = Color.fromARGB(255, 138, 43, 226);
+  static const Color secondaryMedium = Color.fromARGB(255, 150, 65, 229);
+  static const Color secondaryLight = Color.fromARGB(255, 182, 123, 236);
 
   // Tertiary
-  static const Color tertiaryDark = Color(0x39ff14ff);
-  static const Color tertiaryMedium = Color(0x62ff45ff);
-  static const Color tertiaryLight = Color(0x84ff6dff);
+  static const Color tertiaryDark = Color.fromARGB(255, 57, 255, 20);
+  static const Color tertiaryMedium = Color.fromARGB(255, 98, 255, 69);
+  static const Color tertiaryLight = Color.fromARGB(255, 132, 255, 109);
 
   // Support
-  static const Color successDark = Color(0x2E8B57ff);
-  static const Color successMedium = Color(0x4FBF8Dff);
-  static const Color successLight = Color(0x9EFFC9ff);
+  static const Color successDark = Color.fromARGB(255, 0, 255, 112);
+  static const Color successMedium = Color.fromARGB(255, 96, 255, 166);
+  static const Color successLight = Color.fromARGB(255, 158, 255, 201);
 
-  static const Color warningDark = Color(0xf6e200ff);
-  static const Color warningMedium = Color(0xf9ec60ff);
-  static const Color warningLight = Color(0xfff8e5ff);
+  static const Color warningDark = Color.fromARGB(255, 246, 226, 0);
+  static const Color warningMedium = Color.fromARGB(255, 249, 236, 96);
+  static const Color warningLight = Color.fromARGB(255, 255, 248, 229);
 
-  static const Color errorDark = Color(0xff0519ff);
-  static const Color errorMedium = Color(0xff6370ff);
-  static const Color errorLight = Color(0xffe2e5ff);
+  static const Color errorDark = Color.fromARGB(255, 255, 5, 25);
+  static const Color errorMedium = Color.fromARGB(255, 255, 99, 112);
+  static const Color errorLight = Color.fromARGB(255, 255, 226, 229);
 }
 
 class AppTextStyles {
