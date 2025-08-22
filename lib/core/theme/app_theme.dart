@@ -82,6 +82,11 @@ class AppTextStyles {
     fontSize: 12,
     fontWeight: FontWeight.w400,
   );
+  static const TextStyle bodyXS = TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+  );
 
   static const TextStyle actionL = TextStyle(
     fontFamily: 'Inter',
@@ -104,14 +109,14 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     primaryColor: AppColors.primaryLight,
-    scaffoldBackgroundColor: AppColors.backgroundWhiteLight,
+    scaffoldBackgroundColor: Colors.white,
     textTheme: const TextTheme(
       titleLarge: AppTextStyles.h1,
       bodyMedium: AppTextStyles.bodyM,
     ),
     colorScheme: const ColorScheme.light(
       primary: AppColors.primaryLight,
-      surface: AppColors.backgroundWhiteLight,
+      surface: Colors.white,
       error: AppColors.errorMedium,
     ).copyWith(error: AppColors.errorMedium),
   );
@@ -126,7 +131,7 @@ class AppTheme {
     ),
     colorScheme: const ColorScheme.dark(
       primary: AppColors.primaryDark,
-      background: AppColors.backgroundBlackDark,
+      surface: AppColors.backgroundBlackDark,
       error: AppColors.errorMedium,
     ).copyWith(error: AppColors.errorMedium),
   );
