@@ -8,6 +8,7 @@ class MediaCard extends StatelessWidget {
   final IconData iconPlaceholder;
   final String? imageUrl;
   final VoidCallback onPressed;
+  final bool? displayLabel;
   const MediaCard({
     super.key,
     required this.label,
@@ -15,29 +16,37 @@ class MediaCard extends StatelessWidget {
     required this.onPressed,
     required this.iconPlaceholder,
     this.imageUrl,
+    this.displayLabel = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: SizedBox(
-          width: 120,
-          child: Material(
-            child: InkWell(
-              onTap: onPressed,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CardImage(
-                    iconPlaceholder: iconPlaceholder,
-                    imageUrl: imageUrl,
-                  ),
-                  CardInfo(label: label, subTitle: subTitle),
-                ],
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12)
+      ),
+      clipBehavior: Clip.antiAlias,
+      height: 180,
+      width: 120,
+      child: Material(
+        child: InkWell(
+          onTap: onPressed,
+          child: Column(
+            children: [
+              Expanded(
+                child: CardImage(
+                  iconPlaceholder: iconPlaceholder,
+                  imageUrl: imageUrl,
+                ),
               ),
-            ),
+              Visibility(
+                visible: displayLabel!,
+                child: CardInfo(
+                  label: label,
+                  subTitle: subTitle,
+                ),
+              ),
+            ],
           ),
         ),
       ),

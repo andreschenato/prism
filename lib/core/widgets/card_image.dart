@@ -8,28 +8,19 @@ class CardImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      return Ink.image(
+        alignment: Alignment.topCenter,
+        image: NetworkImage(imageUrl!),
+        fit: BoxFit.cover,
+        width: double.infinity,
+      );
+    }
+
     return Ink(
-      height: 150,
       decoration: const BoxDecoration(color: AppColors.primaryLightest),
       child: Center(
-        child: Builder(
-          builder: (context) {
-            Image imageWidget = Image.network(
-              imageUrl ?? '',
-              fit: BoxFit.cover,
-              alignment: Alignment.topCenter,
-              width: double.infinity,
-            );
-            if (imageUrl != null) {
-              return imageWidget;
-            }
-            return Icon(
-              iconPlaceholder,
-              color: AppColors.primaryDark,
-              size: 60,
-            );
-          },
-        ),
+        child: Icon(iconPlaceholder, color: AppColors.primaryDark, size: 60),
       ),
     );
   }
