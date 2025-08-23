@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prism/core/theme/app_theme.dart';
+import 'package:prism/core/widgets/menu.dart';
 
 void main() {
   runApp(const PrismApp());
@@ -14,6 +15,7 @@ class PrismApp extends StatelessWidget {
       title: 'Prism',
       theme: AppTheme.lightTheme,
       home: const MyHomePage(title: 'Prism'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -28,6 +30,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+
+  static final List<Widget> _widgetOptions = <Widget>[
+    const Center(child: Text('Home Page', style: TextStyle(fontSize: 24))),
+
+    const Center(child: Text('Favorites Page', style: TextStyle(fontSize: 24))),
+
+    const Center(child: Text('Profile Page', style: TextStyle(fontSize: 24))),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +53,10 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          spacing: 5,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // Components goes here
-          ],
-        ),
+      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+      bottomNavigationBar: Menu(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
