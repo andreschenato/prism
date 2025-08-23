@@ -1,0 +1,55 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Modifyied by Prof. MSc. Daniel Menin Tortelli
+% Computer Science - URICER - Brazil
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand*\DefVar[1]{\@namedef{#1}##1{\global\@namedef{get#1}{##1}}}
+\DefVar{anais}
+\DefVar{curso}
+\DefVar{ano}
+\DefVar{local}
+\DefVar{edicao}
+\DefVar{evento}
+\DefVar{anais}
+
+\evento{\getedicao~Seminário de Projetos Integradores \getano - \getlocal}
+
+
+
+% Updated in 17 apr 2024
+% Avoid warning
+\setlength{\headheight}{26.85pt}
+
+
+\fancypagestyle{plain}{
+    \fancyhf{} 
+    \fancyhead[C]{\includegraphics[width=16.5cm]{images/logo.png}}
+    \renewcommand{\headrulewidth}{0.4pt}
+	\setlength{\headheight}{76.18016pt} % Adjust head height if image is large
+    
+%\fancyfoot[LE,RO]{\hfill\thepage\hfill}
+
+}
+
+\fancypagestyle{plain2}{
+    \fancyhf{} 
+    \fancyhead[L]{
+    {\scriptsize
+        \begin{tabular}[t]{@{}l@{}}
+           \getevento\\
+           %\getanais\\
+        \end{tabular}
+    }
+}
+\fancyhead[R]{
+    {\scriptsize
+        
+        \begin{tabular}[t]{@{}r@{}}
+            Curso: \getcurso
+        \end{tabular}
+    }
+}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\fancyfoot[C]{\hfill\thepage\hfill}
+
+}
