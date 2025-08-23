@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(child: _widgetOptions.elementAt(_selectedIndex)),
+      body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
       bottomNavigationBar: Menu(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
