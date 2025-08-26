@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/core/widgets/menu.dart';
+import 'package:prism/features/media_list/presentation/view/media_list_view.dart';
 
 class PrismApp extends StatelessWidget {
   const PrismApp({super.key});
@@ -27,7 +28,7 @@ class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
 
   static final List<Widget> _widgetOptions = const <Widget>[
-    Center(child: Text('Home Page', style: TextStyle(fontSize: 24))),
+    Center(child: MediaListView()),
     Center(child: Text('Favorites Page', style: TextStyle(fontSize: 24))),
     Center(child: Text('Profile Page', style: TextStyle(fontSize: 24))),
   ];
@@ -41,6 +42,9 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0,
+      ),
       body: IndexedStack(index: _currentIndex, children: _widgetOptions),
       bottomNavigationBar: Menu(
         currentIndex: _currentIndex,
