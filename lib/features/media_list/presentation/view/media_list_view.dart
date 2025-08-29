@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
@@ -56,7 +57,7 @@ Widget _buildGrid(BuildContext context, MediaListLoaded state, WidgetRef ref) {
       return MediaCard(
         displayLabel: false,
         label: media.title,
-        onPressed: () {},
+        onPressed: () => context.go('/media/${media.id}'),
         iconPlaceholder: Icons.movie_creation_rounded,
         imageUrl: media.posterUrl,
       );
