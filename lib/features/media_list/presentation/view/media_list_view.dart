@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:prism/core/widgets/list_builder.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
@@ -43,24 +44,19 @@ class MediaListView extends ConsumerWidget {
 }
 
 Widget _buildGrid(BuildContext context, MediaListLoaded state, WidgetRef ref) {
-  return GridView.builder(
-    padding: EdgeInsets.zero,
-    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisSpacing: 15,
-      mainAxisSpacing: 15,
-      crossAxisCount: 3,
-      mainAxisExtent: 180,
-    ),
-    itemCount: state.media.length,
+  return ListBuilder(
     itemBuilder: (context, index) {
       final media = state.media[index];
       return MediaCard(
-        displayLabel: false,
         label: media.title,
         onPressed: () => context.go('/media/${media.id}'),
         iconPlaceholder: Icons.movie_creation_rounded,
         imageUrl: media.posterUrl,
+        displayLabel: false,
       );
     },
+    itemCount: state.media.length,
+    axisCount: 3,
+    contentHeight: 180,
   );
 }
