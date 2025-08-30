@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prism/core/widgets/media_details.dart';
 import 'package:prism/features/details/presentation/view_model/details_state.dart';
 import 'package:prism/features/details/presentation/view_model/details_view_model.dart';
 
@@ -11,10 +12,7 @@ class DetailsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(detailsViewModelProvider(mediaId));
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: _buildBody(context, state, ref),
-    );
+    return Scaffold(appBar: AppBar(), body: _buildBody(context, state, ref));
   }
 
   Widget _buildBody(BuildContext context, DetailsState state, WidgetRef ref) {
@@ -22,23 +20,23 @@ class DetailsView extends ConsumerWidget {
       return const Center(child: CircularProgressIndicator());
     }
     if (state is DetailsLoaded) {
+      var media = state.media;
       return Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (state.media.posterUrl != null)
-              Center(
-                child: Image.network(
-                  state.media.posterUrl!,
-                  height: 300,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            const SizedBox(height: 20),
-            Text(
-              state.media.title,
-              style: Theme.of(context).textTheme.headlineSmall,
+            MediaDetails(
+              title: media.title,
+              imageUrl: media.posterUrl,
+              startYear: media.startYear,
+              endYear: media.endYear,
+              directors: media.directors
+                  .map((director) => director.name)
+                  .toList(),
+              writers: media.writers
+                  .map((writer) => writer.name)
+                  .toList(),
             ),
           ],
         ),
