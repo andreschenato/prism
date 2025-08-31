@@ -10,6 +10,7 @@ class DetailsEntity {
   final int? endYear;
   final List<PersonEntity> directors;
   final List<PersonEntity> writers;
+  final List<PersonEntity> actors;
 
   DetailsEntity({
     required this.id,
@@ -21,5 +22,6 @@ class DetailsEntity {
     this.endYear,
     required this.directors,
     required this.writers,
+    required this.actors,
   });
 }

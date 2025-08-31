@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/core/widgets/horizontal_scroll_list.dart';
+import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/core/widgets/media_details.dart';
 import 'package:prism/core/widgets/mini_card.dart';
 import 'package:prism/features/details/presentation/view_model/details_state.dart';
@@ -44,6 +46,27 @@ class DetailsView extends ConsumerWidget {
                 components: media.genres
                     .map((genre) => MiniCard(text: genre))
                     .toList(),
+              ),
+              SizedBox(
+                height: 100,
+                child: Text(media.plot, style: AppTextStyles.bodyXS),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 15,
+                children: [
+                  Text('Actors', style: AppTextStyles.h3),
+                  HorizontalScrollList(
+                    components: media.actors.map(
+                      (actor) => MediaCard(
+                        label: actor.name,
+                        onPressed: () {},
+                        iconPlaceholder: Icons.person_rounded,
+                        imageUrl: actor.photo,
+                      ),
+                    ).toList(),
+                  ),
+                ],
               ),
             ],
           ),
