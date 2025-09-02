@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/core/widgets/horizontal_scroll_list.dart';
+import 'package:prism/core/widgets/horizontal_scroll_section.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/core/widgets/media_details.dart';
 import 'package:prism/core/widgets/mini_card.dart';
+import 'package:prism/features/details/domain/entities/details_entity.dart';
 import 'package:prism/features/details/presentation/view_model/details_state.dart';
 import 'package:prism/features/details/presentation/view_model/details_view_model.dart';
 
@@ -51,23 +53,7 @@ class DetailsView extends ConsumerWidget {
                 height: 100,
                 child: Text(media.plot, style: AppTextStyles.bodyXS),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 15,
-                children: [
-                  Text('Actors', style: AppTextStyles.h3),
-                  HorizontalScrollList(
-                    components: media.actors.map(
-                      (actor) => MediaCard(
-                        label: actor.name,
-                        onPressed: () {},
-                        iconPlaceholder: Icons.person_rounded,
-                        imageUrl: actor.photo,
-                      ),
-                    ).toList(),
-                  ),
-                ],
-              ),
+              ..._buildSections(media),
             ],
           ),
         ),
@@ -83,4 +69,37 @@ class DetailsView extends ConsumerWidget {
     }
     return const Center(child: Text('Loading details...'));
   }
+}
+
+List<Widget> _buildSections(DetailsEntity media) {
+  var seasonsWidget = media.seasons != null
+      ? HorizontalScrollSection(
+          title: 'Seasons',
+          components: media.seasons!
+              .map(
+                (season) => MediaCard(
+                  label: 'Season $season',
+                  onPressed: () {},
+                  iconPlaceholder: Icons.tv_rounded,
+                ),
+              )
+              .toList(),
+        )
+      : Placeholder();
+  return [
+    Visibility(visible: media.seasons != null, child: seasonsWidget),
+    HorizontalScrollSection(
+      title: 'Actors',
+      components: media.actors
+          .map(
+            (actor) => MediaCard(
+              label: actor.name,
+              onPressed: () {},
+              iconPlaceholder: Icons.person_rounded,
+              imageUrl: actor.photo,
+            ),
+          )
+          .toList(),
+    ),
+  ];
 }

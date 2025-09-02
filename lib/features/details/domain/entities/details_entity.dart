@@ -11,6 +11,7 @@ class DetailsEntity {
   final List<PersonEntity> directors;
   final List<PersonEntity> writers;
   final List<PersonEntity> actors;
+  final List? seasons;
 
   DetailsEntity({
     required this.id,
@@ -23,5 +24,6 @@ class DetailsEntity {
     required this.directors,
     required this.writers,
     required this.actors,
+    this.seasons,
   });
 }

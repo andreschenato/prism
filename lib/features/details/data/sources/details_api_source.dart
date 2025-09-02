@@ -6,6 +6,8 @@ class DetailsApiSource {
 
   Future<DetailsResponseModel> fetchMedia(String id) async {
     final responseData = await _apiClient.get('/titles/$id') as Map<String, dynamic>;
+    final seasons = await _apiClient.get('/titles/$id/seasons') as Map<String, dynamic>;
+    responseData['seasons'] = seasons['seasons'];
     return DetailsResponseModel.fromJson(responseData);
   }
 }

@@ -12,6 +12,7 @@ class DetailsResponseModel {
   final List<PersonResponseModel> directors;
   final List<PersonResponseModel> writers;
   final List<PersonResponseModel> actors;
+  final List? seasons;
 
   DetailsResponseModel({
     required this.id,
@@ -24,25 +25,33 @@ class DetailsResponseModel {
     required this.directors,
     required this.writers,
     required this.actors,
+    this.seasons,
   });
 
   factory DetailsResponseModel.fromJson(Map<String, dynamic> json) {
-    var genresList = json['interests'] as List;
-    List<String> genres = genresList
-        .map((i) => i['name'] as String)
-        .toList();
-    var directorsList = json['directors'] as List;
+    final genresList = json['interests'] as List;
+    List<String> genres = genresList.map((i) => i['name'] as String).toList();
+
+    final directorsList = json['directors'] as List;
     List<PersonResponseModel> directors = directorsList
         .map((i) => PersonResponseModel.fromJson(i))
         .toList();
-    var writersList = json['writers'] as List;
+
+    final writersList = json['writers'] as List;
     List<PersonResponseModel> writers = writersList
         .map((i) => PersonResponseModel.fromJson(i))
         .toList();
-    var actorsList = json['stars'] as List;
+
+    final actorsList = json['stars'] as List;
     List<PersonResponseModel> actors = actorsList
         .map((i) => PersonResponseModel.fromJson(i))
         .toList();
+
+    final seasonsData = json['seasons'];
+    List<String>? seasons;
+    if (seasonsData is List && seasonsData.isNotEmpty) {
+      seasons = seasonsData.map((i) => i['season'] as String).toList();
+    }
 
     return DetailsResponseModel(
       id: json['id'],
@@ -55,6 +64,7 @@ class DetailsResponseModel {
       directors: directors,
       writers: writers,
       actors: actors,
+      seasons: seasons,
     );
   }
 
@@ -70,6 +80,7 @@ class DetailsResponseModel {
       directors: directors.map((director) => director.toEntity()).toList(),
       writers: writers.map((writer) => writer.toEntity()).toList(),
       actors: actors.map((actor) => actor.toEntity()).toList(),
+      seasons: seasons,
     );
   }
 }
