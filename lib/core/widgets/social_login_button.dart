@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:prism/core/theme/app_theme.dart';
 
-class CustomButton extends StatelessWidget {
+class SocialLoginButton extends StatelessWidget {
+  final String asset;
   final String label;
   final VoidCallback onPressed;
   final double? width;
-  const CustomButton({
+  const SocialLoginButton({
     super.key,
+    required this.asset,
     required this.label,
     required this.onPressed,
     this.width,
@@ -19,16 +22,23 @@ class CustomButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           textStyle: AppTextStyles.actionM,
-          backgroundColor: AppColors.primaryMedium,
-          foregroundColor: AppColors.backgroundWhiteLight,
+          backgroundColor: AppColors.backgroundWhiteLight,
+          foregroundColor: AppColors.backgroundBlackDark,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         ),
-        child: Text(label, style: AppTextStyles.actionM),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 10,
+          children: [
+            SvgPicture.asset(asset, width: 24, height: 24),
+            Text(label, style: AppTextStyles.actionL),
+          ],
+        ),
       ),
     );
   }
