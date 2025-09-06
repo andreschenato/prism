@@ -1,4 +1,8 @@
 
 \section{Introdução}
 
-A digitalização de ...
+Este artigo descreve o desenvolvimento do prism, uma aplicação mobile projetada para otimizar o processo de recomendação personalizada de filmes para usuários. O sistema visa mitigar os desafios inerentes à vasta quantidade de conteúdo disponível em plataformas de streaming, proporcionando uma experiência de descoberta de conteúdo audiovisual mais eficiente e alinhada às preferências individuais.
+
+A arquitetura do prism integra tecnologias modernas para garantir escalabilidade, desempenho e uma experiência de usuário rica. A interface da aplicação é construída utilizando o framework Flutter, permitindo o desenvolvimento multi-plataforma e uma interface de usuário responsiva. O backend é implementado sobre a infraestrutura Firebase, compreendendo serviços como Firebase Authentication para gerenciamento de usuários, Cloud Firestore para persistência de dados e Cloud Functions, desenvolvidas em Node.js, para lógica de negócios serverless.
+
+Para enriquecer a capacidade de recomendação, o prism estabelece integração com APIs externas. A IMDb API é utilizada para a coleta de metadados abrangentes sobre filmes e séries, enquanto uma API de Inteligência Artificial (IA), como Gemini ou Claude, é empregada para processamento de linguagem natural. Esta integração permite a interpretação de prompts de contexto e solicitações do usuário, viabilizando a geração de recomendações altamente personalizadas. A interface do usuário é estruturada em seções intuitivas como "Favoritos", "Perfeitos para Você" e "Você Também Pode Gostar", buscando organizar as recomendações em diferentes níveis de relevância percebida. Os protótipos de design da aplicação foram desenvolvidos em Figma, conforme as melhores práticas de User Experience (UX).
