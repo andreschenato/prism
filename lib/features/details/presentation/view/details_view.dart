@@ -97,6 +97,7 @@ List<Widget> _buildSections(DetailsEntity media) {
               onPressed: () {},
               iconPlaceholder: Icons.person_rounded,
               imageUrl: actor.photo,
+              subTitle: actor.character,
             ),
           )
           .toList(),

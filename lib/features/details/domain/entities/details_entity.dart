@@ -1,7 +1,7 @@
 import 'package:prism/features/details/domain/entities/person_entity.dart';
 
 class DetailsEntity {
-  final String id;
+  final int id;
   final String title;
   final String plot;
   final String? posterUrl;
