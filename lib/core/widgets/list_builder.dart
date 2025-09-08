@@ -4,6 +4,7 @@ class ListBuilder extends StatelessWidget {
   final int axisCount;
   final double contentHeight;
   final int itemCount;
+  final ScrollController controller;
   final Widget? Function(BuildContext, int) itemBuilder;
   const ListBuilder({
     super.key,
@@ -11,11 +12,13 @@ class ListBuilder extends StatelessWidget {
     required this.itemCount,
     required this.axisCount,
     required this.contentHeight,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      controller: controller,
       padding: EdgeInsets.zero,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisSpacing: 15,

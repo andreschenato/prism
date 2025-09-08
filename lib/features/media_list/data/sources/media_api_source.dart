@@ -5,10 +5,10 @@ import 'package:prism/features/media_list/data/models/media_response_model.dart'
 class MediaApiSource {
   final _apiClient = ApiClient(baseUrl: 'https://api.themoviedb.org');
 
-  Future<List<MediaResponseModel>> fetchMedia() async {
+  Future<List<MediaResponseModel>> fetchMedia({int page = 1}) async {
     String? apiKey = dotenv.env['TMDB_API_KEY'];
     var headers = <String, String>{'Authorization': 'Bearer $apiKey'};
-    final responseData = await _apiClient.get('/3/discover/movie?language=pt-BR&page=1', headers: Map.from(headers));
+    final responseData = await _apiClient.get('/3/discover/movie??include_adult=false&include_video=false&language=pt-BR&page=$page', headers: Map.from(headers));
     final resultsList = responseData['results'] as List;
     return resultsList
         .map((mediaJson) => MediaResponseModel.fromJson(mediaJson))
