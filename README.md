@@ -48,7 +48,7 @@ The very last step for this basic configuration is to create a `.env` file, just
 And that's it! Now you can run the project without any major problems.
 
 ### Setup Firebase emulator (Recommended)
-You probaly don't want to use the real Firebase client for debug (for god sake, this is not a good idea). So you may want to setup the Firebase emulator.
+You probably don't want to use the real Firebase client for debug (for god sake, this is not a good idea). So you may want to setup the Firebase emulator.
 
 To do that, first you need to have Java installed and run:
 

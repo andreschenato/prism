@@ -62,7 +62,7 @@ class AuthApiSource {
     final authClient = account.authorizationClient;
 
     GoogleSignInClientAuthorization? auth = await authClient
-        .authorizationForScopes(['email', 'profile']);
+        .authorizationForScopes(['email', 'settings']);
 
     if (auth == null) {
       throw FirebaseAuthException(code: 'No acceess token provided');
