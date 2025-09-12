@@ -1,10 +1,10 @@
 // lib/features/user/presentation/user_page.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/core/theme/app_theme.dart';
-import 'package:prism/core/widgets/button.dart';
-import '../../../../core/widgets/navigation_tile.dart';
-import '../../../auth/data/sources/auth_api_source.dart';
+import 'package:prism/core/widgets/navigation_tile.dart';
+import 'package:prism/features/auth/data/sources/auth_api_source.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -26,8 +26,9 @@ class SettingsPage extends ConsumerWidget {
                 child: Column(
                   spacing: 10,
                   children: [
-                    _Header(username: 'Username', onEditTap: () {
+                    _Header(username: FirebaseAuth.instance.currentUser?.displayName, onEditTap: () {
                       // TODO: abrir modal/rota para editar foto/nome
+
                     }),
                     NavigationTile(
                       label: 'Account',
@@ -84,16 +85,15 @@ class SettingsPage extends ConsumerWidget {
 
 class _Header extends StatelessWidget {
   const _Header({
-    required this.username,
+    this.username,
     this.onEditTap,
   });
 
-  final String username;
+  final String? username;
   final VoidCallback? onEditTap;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
 
     return Column(
       children: [
@@ -102,7 +102,7 @@ class _Header extends StatelessWidget {
           children: [
             const CircleAvatar(
               radius: 44,
-              backgroundColor: AppColors.primaryDark, // azul semelhante ao mock
+              backgroundColor: AppColors.primaryDark,
               child: Icon(Icons.person, color: Colors.white, size: 48),
             ),
             Positioned(
@@ -126,11 +126,10 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          username,
-          style: textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+          username!,
+          style: AppTextStyles.h1,
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 8),
       ],
     );
   }
