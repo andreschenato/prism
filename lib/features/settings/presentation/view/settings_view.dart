@@ -18,56 +18,63 @@ class SettingsPage extends ConsumerWidget {
   Widget _buildBody(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                children: [
-                  const SizedBox(height: 8),
-                  _Header(username: 'Username', onEditTap: () {
-                    // TODO: abrir modal/rota para editar foto/nome
-                  }),
-                  const SizedBox(height: 16),
-                  NavigationTile(
-                    label: 'Account',
-                    onTap: () {
-                      // TODO: push('/settings/account');
-                    },
-                  ),
-                  NavigationTile(
-                    label: 'Notifications',
-                    onTap: () {
-                      // TODO: push('/settings/notifications');
-                    },
-                  ),
-                  NavigationTile(
-                    label: 'Appearance',
-                    onTap: () {
-                      // TODO: push('/settings/appearance');
-                    },
-                  ),
-                  NavigationTile(
-                    label: 'Informations',
-                    onTap: () {
-                      // TODO: push('/settings/informations');
-                    },
-                  ),
-                ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Column(
+            children: [
+              Expanded(
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    _Header(username: 'Username', onEditTap: () {
+                      // TODO: abrir modal/rota para editar foto/nome
+                    }),
+                    NavigationTile(
+                      label: 'Account',
+                      color: AppColors.backgroundBlackDark,
+                      icon: Icon(Icons.chevron_right),
+                      onTap: () {
+                        // TODO: push('/settings/account');
+                      },
+                    ),
+                    NavigationTile(
+                      label: 'Notifications',
+                      color: AppColors.backgroundBlackDark,
+                      icon: Icon(Icons.chevron_right),
+                      onTap: () {
+                        // TODO: push('/settings/notifications');
+                      },
+                    ),
+                    NavigationTile(
+                      label: 'Appearance',
+                      color: AppColors.backgroundBlackDark,
+                      icon: Icon(Icons.chevron_right),
+                      onTap: () {
+                        // TODO: push('/settings/appearance');
+                      },
+                    ),
+                    NavigationTile(
+                      label: 'Informations',
+                      color: AppColors.backgroundBlackDark,
+                      icon: Icon(Icons.chevron_right),
+                      onTap: () {
+                        // TODO: push('/settings/informations');
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            // botão sempre no rodapé
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: _LogoutTile(
-                label: 'Logout',
-                onTap: () {
-                  AuthApiSource().signOut();
-                },
-              ),
-            ),
-          ],
+               NavigationTile(
+                  label: 'Logout',
+                  color: AppColors.errorDark,
+                  icon: Icon(Icons.logout),
+                  onTap: () {
+                    AuthApiSource().signOut();
+                  },
+                ),
+            ],
+          ),
         ),
       ),
       backgroundColor: Colors.white,
@@ -129,31 +136,4 @@ class _Header extends StatelessWidget {
   }
 }
 
-class _LogoutTile extends StatelessWidget{
-  final String label;
-  final VoidCallback onTap;
-  const _LogoutTile({
-    required this.label,
-    required this.onTap
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
-        child:
-        Material(
-          color: AppColors.backgroundWhiteLight,
-          borderRadius: BorderRadius.circular(12),
-          child: ListTile(
-            iconColor: AppColors.errorDark,
-            textColor: AppColors.errorDark,
-            title: Text(label, style: AppTextStyles.actionL),
-            trailing: const Icon(Icons.logout),
-            onTap: onTap,
-          ),
-        )
-    );
-  }
-}
 

@@ -72,9 +72,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/settings',
                 name: AppRoutes.profile.name,
                 builder: (context, state) => Center(
-                  child: SettingsPage()//CustomButton(label: 'Logout ${authState is Authenticated ? authState.user.name : null}', onPressed: () {
-                    //AuthApiSource().signOut();
-                  //},),
+                  child: SettingsPage(),
                 ),
               ),
             ],
