@@ -10,8 +10,16 @@ import 'package:prism/features/auth/presentation/view_model/auth_state.dart';
 import 'package:prism/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:prism/features/details/presentation/view/details_view.dart';
 import 'package:prism/features/media_list/presentation/view/media_list_view.dart';
+import 'package:prism/features/recommendations/presentation/view/recommendations_view.dart';
 
-enum AppRoutes { mediaList, favorites, profile, login, register }
+enum AppRoutes {
+  recommendations,
+  mediaList,
+  favorites,
+  profile,
+  login,
+  register,
+}
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authViewModelProvider);
