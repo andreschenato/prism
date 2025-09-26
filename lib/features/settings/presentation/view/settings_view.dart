@@ -6,6 +6,8 @@ import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/core/widgets/navigation_tile.dart';
 import 'package:prism/features/auth/data/sources/auth_api_source.dart';
 
+import 'account_details_view.dart';
+
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
@@ -30,15 +32,17 @@ class SettingsPage extends ConsumerWidget {
                       // TODO: abrir modal/rota para editar foto/nome
 
                     }),
-                    NavigationTile(
+                    GenericTile(
                       label: 'Account',
                       color: AppColors.backgroundBlackDark,
                       icon: Icon(Icons.chevron_right),
                       onTap: () {
-                        // TODO: push('/settings/account');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const AccountDetailsPage()),
+                        );
                       },
                     ),
-                    NavigationTile(
+                    GenericTile(
                       label: 'Notifications',
                       color: AppColors.backgroundBlackDark,
                       icon: Icon(Icons.chevron_right),
@@ -46,7 +50,7 @@ class SettingsPage extends ConsumerWidget {
                         // TODO: push('/settings/notifications');
                       },
                     ),
-                    NavigationTile(
+                    GenericTile(
                       label: 'Appearance',
                       color: AppColors.backgroundBlackDark,
                       icon: Icon(Icons.chevron_right),
@@ -54,7 +58,7 @@ class SettingsPage extends ConsumerWidget {
                         // TODO: push('/settings/appearance');
                       },
                     ),
-                    NavigationTile(
+                    GenericTile(
                       label: 'Informations',
                       color: AppColors.backgroundBlackDark,
                       icon: Icon(Icons.chevron_right),
@@ -66,7 +70,7 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
 
-               NavigationTile(
+               GenericTile(
                   label: 'Logout',
                   color: AppColors.errorDark,
                   icon: Icon(Icons.logout),

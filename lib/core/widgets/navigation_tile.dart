@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:prism/core/theme/app_theme.dart';
 
-class NavigationTile extends StatelessWidget {
+class GenericTile extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final double? width;
   final Icon icon;
   final Color color;
-  const NavigationTile({
+  const GenericTile({
     super.key,
     required this.label,
     required this.onTap,
