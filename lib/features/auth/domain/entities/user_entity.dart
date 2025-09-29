@@ -4,7 +4,7 @@ class UserEntity {
   final String? name;
   final String? countryCode;
   final String? language;
-  final List? genreIds;
+  final Map? genreIds;
 
   UserEntity({
     required this.id,

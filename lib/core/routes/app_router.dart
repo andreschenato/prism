@@ -9,6 +9,8 @@ import 'package:prism/features/auth/presentation/view/register_view.dart';
 import 'package:prism/features/auth/presentation/view_model/auth_state.dart';
 import 'package:prism/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:prism/features/complete_profile/presentation/view/complete_profile_view.dart';
+import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_state.dart';
+import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_view_model.dart';
 import 'package:prism/features/details/presentation/view/details_view.dart';
 import 'package:prism/features/media_list/presentation/view/media_list_view.dart';
 
@@ -23,6 +25,7 @@ enum AppRoutes {
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authViewModelProvider);
+  final userPreferences = ref.watch(completeProfileProvider);
 
   return GoRouter(
     initialLocation: '/',
@@ -108,7 +111,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         return loggingIn ? null : '/login';
       }
 
-      if (isLogged && (authState.user.countryCode == null || authState.user.countryCode!.isEmpty)) {
+      if (isLogged && userPreferences is ProfileNotSet) {
         return '/complete_profile';
       }
 

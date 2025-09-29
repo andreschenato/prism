@@ -13,11 +13,33 @@ class ProfileViewModel extends StateNotifier<ProfileState> {
 
   ProfileViewModel(this._repository) : super(ProfileInitial()) {
     _repository.user.listen((user) {
-      if (user != null) {
-        state = ProfileSet(user);
+      if (user?.countryCode != null &&
+          user?.genreIds != null &&
+          user?.language != null) {
+        state = ProfileSet(user!);
       } else {
         state = ProfileNotSet();
       }
     });
+  }
+
+  Future<void> setUserProfilePreferences(
+    Map<String, Set<int>> genreIds,
+    String language,
+    String country,
+    String userId,
+  ) async {
+    try {
+      state = ProfileLoading();
+      final user = await _repository.setUserProfilePreferences(
+        genreIds,
+        country,
+        language,
+        userId,
+      );
+      state = ProfileSet(user!);
+    } catch (e) {
+      state = ProfileError(e.toString());
+    }
   }
 }

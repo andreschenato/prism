@@ -4,9 +4,12 @@ import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/core/widgets/button.dart';
 import 'package:prism/core/widgets/list_builder.dart';
 import 'package:prism/core/widgets/rounded_mini_card.dart';
+import 'package:prism/features/auth/presentation/view_model/auth_state.dart';
+import 'package:prism/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:prism/features/complete_profile/presentation/view/complete_profile_view.dart';
 import 'package:prism/features/complete_profile/presentation/view/select_language_country_view.dart'
-    as selected_language;
+    as region_preferences;
+import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_view_model.dart';
 import 'package:prism/features/complete_profile/presentation/view_model/genres_state.dart';
 import 'package:prism/features/complete_profile/presentation/view_model/genres_view_model.dart';
 
@@ -45,7 +48,7 @@ class _SelectGenreViewState extends ConsumerState<SelectGenresView> {
 
   @override
   Widget build(BuildContext context) {
-    final lang = ref.watch(selected_language.selectedLanguageProvider);
+    final lang = ref.watch(region_preferences.selectedLanguageProvider);
     final state = ref.watch(
       genresViewModelProvider((lang ?? 'en-US', widget.type)),
     );
@@ -54,6 +57,10 @@ class _SelectGenreViewState extends ConsumerState<SelectGenresView> {
   }
 
   Widget _buildBody(BuildContext context, GenresState state, WidgetRef ref) {
+    final authState = ref.read(authViewModelProvider);
+    if (authState is! Authenticated) {
+      throw Exception('user_not_logged');
+    }
     if (state is GenresLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -108,7 +115,18 @@ class _SelectGenreViewState extends ConsumerState<SelectGenresView> {
                                 .state++;
                           }
                           if (index == 2) {
-                            print(ref.read(selectedGenresProvider));
+                            ref
+                                .read(completeProfileProvider.notifier)
+                                .setUserProfilePreferences(
+                                  ref.watch(selectedGenresProvider)!,
+                                  ref.watch(
+                                    region_preferences.selectedLanguageProvider,
+                                  )!,
+                                  ref.watch(
+                                    region_preferences.selectedCountryProvider,
+                                  )!,
+                                  authState.user.id,
+                                );
                           }
                         },
                 ),

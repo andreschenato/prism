@@ -7,19 +7,35 @@ class ProfileFirestoreSource {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Stream<UserEntity?> get user {
-    return _firebaseAuth.authStateChanges().map((firebaseUser) {
-      return firebaseUser == null
-          ? null
-          : UserEntity(
-              id: firebaseUser.uid,
-              email: firebaseUser.email,
-              name: firebaseUser.displayName,
-            );
+    return _firebaseAuth.authStateChanges().asyncMap((firebaseUser) async {
+      if (firebaseUser == null) {
+        return null;
+      }
+
+      final docSnapshot = await _firestore
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
+
+      final docData = docSnapshot.data();
+
+      final Map<String, dynamic> genres = docData?['genre_ids'];
+      final String language = docData?['language'];
+      final String countryCode = docData?['country_code'];
+
+      return UserEntity(
+        id: firebaseUser.uid,
+        email: firebaseUser.email,
+        name: firebaseUser.displayName,
+        genreIds: genres,
+        language: language,
+        countryCode: countryCode,
+      );
     });
   }
 
   Future<UserEntity?> setUserProfilePreferences(
-    List genreIds,
+    Map genreIds,
     String country,
     String language,
     String userId,

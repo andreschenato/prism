@@ -11,7 +11,7 @@ class CompleteProfileRepositoryImpl implements CompleteProfileRepository {
 
   @override
   Future<UserEntity?> setUserProfilePreferences(
-    List genreIds,
+    Map<String, Set<int>> genreIds,
     String country,
     String language,
     String userId,
