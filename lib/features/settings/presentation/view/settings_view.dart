@@ -1,23 +1,57 @@
 // lib/features/user/presentation/user_page.dart
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/core/widgets/navigation_tile.dart';
 import 'package:prism/features/auth/data/sources/auth_api_source.dart';
 
 import 'account_details_view.dart';
 
-class SettingsPage extends ConsumerWidget {
+class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(appBar: AppBar(), body: _buildBody(context, ref));
+  ConsumerState<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends ConsumerState<SettingsPage> {
+  String? _username;
+  StreamSubscription<User?>? _userChangesSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _username = FirebaseAuth.instance.currentUser?.displayName;
+    // Update the username whenever FirebaseAuth notifies listeners about changes.
+    _userChangesSubscription = FirebaseAuth.instance.userChanges().listen((
+      user,
+    ) {
+      final currentDisplayName = user?.displayName;
+      if (!mounted || _username == currentDisplayName) {
+        return;
+      }
+      setState(() {
+        _username = currentDisplayName;
+      });
+    });
   }
 
+  @override
+  void dispose() {
+    _userChangesSubscription?.cancel();
+    super.dispose();
+  }
 
-  Widget _buildBody(BuildContext context, WidgetRef ref) {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(), body: _buildBody(context));
+  }
+
+  Widget _buildBody(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -28,17 +62,21 @@ class SettingsPage extends ConsumerWidget {
                 child: Column(
                   spacing: 10,
                   children: [
-                    _Header(username: FirebaseAuth.instance.currentUser?.displayName, onEditTap: () {
-                      // TODO: abrir modal/rota para editar foto/nome
-
-                    }),
+                    _Header(
+                      username: _username,
+                      onEditTap: () {
+                        // TODO: abrir modal/rota para editar foto/nome
+                      },
+                    ),
                     GenericTile(
                       label: 'Account',
                       color: AppColors.backgroundBlackDark,
                       icon: Icon(Icons.chevron_right),
                       onTap: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const AccountDetailsPage()),
+                          MaterialPageRoute(
+                            builder: (_) => const AccountDetailsPage(),
+                          ),
                         );
                       },
                     ),
@@ -70,14 +108,14 @@ class SettingsPage extends ConsumerWidget {
                 ),
               ),
 
-               GenericTile(
-                  label: 'Logout',
-                  color: AppColors.errorDark,
-                  icon: Icon(Icons.logout),
-                  onTap: () {
-                    AuthApiSource().signOut();
-                  },
-                ),
+              GenericTile(
+                label: 'Logout',
+                color: AppColors.errorDark,
+                icon: Icon(Icons.logout),
+                onTap: () {
+                  AuthApiSource().signOut();
+                },
+              ),
             ],
           ),
         ),
@@ -88,17 +126,13 @@ class SettingsPage extends ConsumerWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({
-    this.username,
-    this.onEditTap,
-  });
+  const _Header({this.username, this.onEditTap});
 
   final String? username;
   final VoidCallback? onEditTap;
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         Stack(
@@ -130,7 +164,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          username!,
+          username ?? '',
           style: AppTextStyles.h1,
           textAlign: TextAlign.center,
         ),

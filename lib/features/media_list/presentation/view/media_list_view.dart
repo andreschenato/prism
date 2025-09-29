@@ -5,6 +5,7 @@ import 'package:prism/core/widgets/list_builder.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
+import 'package:prism/core/theme/app_theme.dart';
 
 class MediaListView extends ConsumerWidget {
   const MediaListView({super.key});
@@ -27,7 +28,12 @@ class MediaListView extends ConsumerWidget {
           spacing: 20,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Expanded(child: _buildGrid(context, state, ref))],
+          children: [
+            Text(
+            'Hi, User!',
+            style: AppTextStyles.h1
+        ),
+            Expanded(child: _buildGrid(context, state, ref))],
         ),
       );
     }
