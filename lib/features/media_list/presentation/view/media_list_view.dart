@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:prism/core/widgets/button.dart';
 import 'package:prism/core/widgets/carousel_builder.dart';
-import 'package:prism/core/widgets/list_builder.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
@@ -27,10 +27,11 @@ class MediaListView extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           spacing: 20,
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Hi, User!', style: AppTextStyles.h1),
+            CustomButton(label: 'Get new recommendations', iconData: Icons.auto_awesome, width: 160, onPressed: () => {}),
             SizedBox(
               width: double.infinity,
               child: Padding(
