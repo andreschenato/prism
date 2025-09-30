@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:prism/core/widgets/carousel_builder.dart';
 import 'package:prism/core/widgets/list_builder.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
@@ -26,14 +27,34 @@ class MediaListView extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           spacing: 20,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-            'Hi, User!',
-            style: AppTextStyles.h1
-        ),
-            Expanded(child: _buildGrid(context, state, ref))],
+            Text('Hi, User!', style: AppTextStyles.h1),
+            SizedBox(
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('Perfect for you', style: AppTextStyles.h2),
+
+                  const Spacer(),
+
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: Go to a GridView with all items
+                    },
+                    child: Text('See all', style: TextStyle(
+                      color: AppColors.primaryLight,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    )),
+                  ),
+                ],
+              ),
+            ),
+            _buildGrid(context, state, ref),
+          ],
         ),
       );
     }
@@ -50,7 +71,7 @@ class MediaListView extends ConsumerWidget {
 }
 
 Widget _buildGrid(BuildContext context, MediaListLoaded state, WidgetRef ref) {
-  return ListBuilder(
+  return CarouselBuilder(
     itemBuilder: (context, index) {
       final media = state.media[index];
       return MediaCard(
@@ -62,7 +83,6 @@ Widget _buildGrid(BuildContext context, MediaListLoaded state, WidgetRef ref) {
       );
     },
     itemCount: state.media.length,
-    axisCount: 3,
-    contentHeight: 180,
+    height: 200,
   );
 }
