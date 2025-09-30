@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:prism/core/widgets/button.dart';
 import 'package:prism/core/widgets/shell_view.dart';
-import 'package:prism/features/auth/data/sources/auth_api_source.dart';
 import 'package:prism/features/auth/presentation/view/login_view.dart';
 import 'package:prism/features/auth/presentation/view/register_view.dart';
 import 'package:prism/features/auth/presentation/view_model/auth_state.dart';
@@ -13,6 +11,7 @@ import 'package:prism/features/complete_profile/presentation/view_model/complete
 import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_view_model.dart';
 import 'package:prism/features/details/presentation/view/details_view.dart';
 import 'package:prism/features/media_list/presentation/view/media_list_view.dart';
+import 'package:prism/features/settings/presentation/view/settings_view.dart';
 
 enum AppRoutes {
   mediaList,
@@ -84,16 +83,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: '/profile',
+                path: '/settings',
                 name: AppRoutes.profile.name,
                 builder: (context, state) => Center(
-                  child: CustomButton(
-                    label:
-                        'Logout ${authState is Authenticated ? authState.user.name : null}',
-                    onPressed: () {
-                      AuthApiSource().signOut();
-                    },
-                  ),
+                  child: SettingsPage(),
                 ),
               ),
             ],
