@@ -1,21 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:prism/core/widgets/button.dart';
 import 'package:prism/core/widgets/shell_view.dart';
-import 'package:prism/features/auth/data/sources/auth_api_source.dart';
 import 'package:prism/features/auth/presentation/view/login_view.dart';
 import 'package:prism/features/auth/presentation/view/register_view.dart';
 import 'package:prism/features/auth/presentation/view_model/auth_state.dart';
 import 'package:prism/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:prism/features/complete_profile/presentation/view/complete_profile_view.dart';
+import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_state.dart';
+import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_view_model.dart';
 import 'package:prism/features/details/presentation/view/details_view.dart';
 import 'package:prism/features/media_list/presentation/view/media_list_view.dart';
 import 'package:prism/features/settings/presentation/view/settings_view.dart';
 
-enum AppRoutes { mediaList, favorites, profile, login, register }
+enum AppRoutes {
+  mediaList,
+  favorites,
+  profile,
+  login,
+  register,
+  completeProfile,
+}
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authViewModelProvider);
+  final userPreferences = ref.watch(completeProfileProvider);
 
   return GoRouter(
     initialLocation: '/',
@@ -29,6 +38,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/register',
         name: AppRoutes.register.name,
         builder: (context, state) => RegisterView(),
+      ),
+      GoRoute(
+        path: '/complete_profile',
+        name: AppRoutes.completeProfile.name,
+        builder: (context, state) => CompleteProfileView(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -88,6 +102,10 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       if (!isLogged) {
         return loggingIn ? null : '/login';
+      }
+
+      if (isLogged && userPreferences is ProfileNotSet) {
+        return '/complete_profile';
       }
 
       if (loggingIn) {

@@ -6,17 +6,43 @@ import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
 
-class MediaListView extends ConsumerWidget {
+class MediaListView extends ConsumerStatefulWidget {
   const MediaListView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(mediaListViewModelProvider);
+  ConsumerState<MediaListView> createState() => _MediaListViewState();
+}
 
-    return Scaffold(body: _buildBody(context, state, ref));
+class _MediaListViewState extends ConsumerState<MediaListView> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
   }
 
-  Widget _buildBody(BuildContext context, MediaListState state, WidgetRef ref) {
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
+      ref.read(mediaListViewModelProvider.notifier).fetchMedia();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(mediaListViewModelProvider);
+
+    return Scaffold(body: _buildBody(context, state));
+  }
+
+  Widget _buildBody(BuildContext context, MediaListState state) {
     if (state is MediaListLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -27,7 +53,7 @@ class MediaListView extends ConsumerWidget {
           spacing: 20,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Expanded(child: _buildGrid(context, state, ref))],
+          children: [Expanded(child: _buildGrid(context, state))],
         ),
       );
     }
@@ -41,22 +67,23 @@ class MediaListView extends ConsumerWidget {
     }
     return const Center(child: Text('Press button to load more media'));
   }
-}
 
-Widget _buildGrid(BuildContext context, MediaListLoaded state, WidgetRef ref) {
-  return ListBuilder(
-    itemBuilder: (context, index) {
-      final media = state.media[index];
-      return MediaCard(
-        label: media.title,
-        onPressed: () => context.go('/media/${media.id}'),
-        iconPlaceholder: Icons.movie_creation_rounded,
-        imageUrl: media.posterUrl,
-        displayLabel: false,
-      );
-    },
-    itemCount: state.media.length,
-    axisCount: 3,
-    contentHeight: 180,
-  );
+  Widget _buildGrid(BuildContext context, MediaListLoaded state) {
+    return ListBuilder(
+      controller: _scrollController,
+      itemBuilder: (context, index) {
+        final media = state.media[index];
+        return MediaCard(
+          label: media.title,
+          onPressed: () => context.go('/media/${media.id}'),
+          iconPlaceholder: Icons.movie_creation_rounded,
+          imageUrl: media.posterUrl,
+          displayLabel: false,
+        );
+      },
+      itemCount: state.media.length,
+      axisCount: 3,
+      contentHeight: 180,
+    );
+  }
 }
