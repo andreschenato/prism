@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:prism/core/theme/app_theme.dart';
+import 'package:prism/core/widgets/editable_card.dart';
 
 class AccountDetailsPage extends StatefulWidget {
   const AccountDetailsPage({super.key});
@@ -54,7 +55,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                 'Account Settings',
                 style: AppTextStyles.h1
               ),
-              _EditableCard(
+              EditableCard(
                 value: _username ?? 'Username',
                 onTap: () => _openEditSheet(
                   title: 'Username',
@@ -65,7 +66,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                   },
                 ),
               ),
-              _EditableCard(
+              EditableCard(
                 value: _email ?? 'user@email.com',
                 onTap: () => _openEditSheet(
                   title: 'E-mail',
@@ -77,7 +78,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                   },
                 ),
               ),
-              _EditableCard(
+              EditableCard(
                 value: _passwordMask,
                 obscureLikeMock: true,
                 onTap: () => _openEditSheet(
@@ -122,11 +123,11 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
         return Padding(
           padding: EdgeInsets.fromLTRB(16, 16, 16, viewInsets + 16),
           child: Column(
+            spacing: 10,
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(title, style: AppTextStyles.h2),
-              const SizedBox(height: 12),
               StatefulBuilder(
                 builder: (context, setSB) {
                   return TextField(
@@ -150,8 +151,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                     ),
                   );
                 },
-              ),
-              const SizedBox(height: 12),
+              ),              
               FilledButton(
                 onPressed: () {
                   final text = controller.text.trim();
@@ -168,49 +168,6 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
           ),
         );
       },
-    );
-  }
-}
-
-class _EditableCard extends StatelessWidget {
-  const _EditableCard({
-    required this.value,
-    required this.onTap,
-    this.obscureLikeMock = false,
-  });
-
-  final String value;
-  final VoidCallback onTap;
-  final bool obscureLikeMock;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.grey.shade200,
-      borderRadius: BorderRadius.circular(10),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  value,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: AppColors.backgroundBlackMedium,
-                    letterSpacing: obscureLikeMock ? 2 : 0,
-                  ),
-                ),
-              ),
-              const Icon(Icons.edit, size: 18),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
