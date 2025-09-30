@@ -40,10 +40,10 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
           ),
         ],
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: AppColors.backgroundWhiteLight,
+        foregroundColor: AppColors.backgroundBlackDark,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backgroundWhiteLight,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -87,10 +87,7 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
                   initial: '',
                   onSave: (txt) async {
                     // await _auth.currentUser?.updatePassword(txt);
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Senha atualizada.')),
-                    );
+                    // setState(() => _password = txt);
                   },
                 ),
               ),
