@@ -33,27 +33,56 @@ class MediaListView extends ConsumerWidget {
             Text('Hi, User!', style: AppTextStyles.h1),
             SizedBox(
               width: double.infinity,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text('Perfect for you', style: AppTextStyles.h2),
-
-                  const Spacer(),
-
-                  GestureDetector(
-                    onTap: () {
-                      // TODO: Go to a GridView with all items
-                    },
-                    child: Text('See all', style: TextStyle(
-                      color: AppColors.primaryLight,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    )),
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('Perfect for you', style: AppTextStyles.h2),
+                
+                    const Spacer(),
+                
+                    GestureDetector(
+                      onTap: () {
+                        // TODO: Go to a GridView with all items
+                      },
+                      child: Text('See all', style: TextStyle(
+                        color: AppColors.primaryLight,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      )),
+                    ),
+                  ],
+                ),
               ),
             ),
             _buildGrid(context, state, ref),
+            SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('Your Favorites', style: AppTextStyles.h2),
+                
+                    const Spacer(),
+                
+                    GestureDetector(
+                      onTap: () {
+                        // TODO: Go to a GridView with all items
+                      },
+                      child: Text('See all', style: TextStyle(
+                        color: AppColors.primaryLight,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            _buildGrid(context, state, ref),            
           ],
         ),
       );
