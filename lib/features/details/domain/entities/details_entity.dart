@@ -1,4 +1,5 @@
 import 'package:prism/features/details/domain/entities/person_entity.dart';
+import 'package:prism/features/details/domain/entities/season_entity.dart';
 
 class DetailsEntity {
   final int id;
@@ -11,7 +12,7 @@ class DetailsEntity {
   final List<PersonEntity> directors;
   final List<PersonEntity> writers;
   final List<PersonEntity> actors;
-  final List? seasons;
+  final List<SeasonEntity>? seasons;
 
   DetailsEntity({
     required this.id,

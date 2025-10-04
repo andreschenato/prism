@@ -62,7 +62,8 @@ final routerProvider = Provider<GoRouter>((ref) {
                     name: 'Details',
                     builder: (context, state) {
                       final mediaId = state.pathParameters['mediaId'];
-                      return DetailsView(mediaId!);
+                      final type = state.uri.queryParameters['type'];
+                      return DetailsView(mediaId!, type!);
                     },
                   ),
                 ],
