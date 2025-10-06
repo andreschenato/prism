@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:prism/core/widgets/button.dart';
-import 'package:prism/core/widgets/carousel_builder.dart';
+import 'package:prism/core/widgets/horizontal_scroll_list.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
@@ -101,18 +101,20 @@ class MediaListView extends ConsumerWidget {
 }
 
 Widget _buildGrid(BuildContext context, MediaListLoaded state, WidgetRef ref) {
-  return CarouselBuilder(
-    itemBuilder: (context, index) {
-      final media = state.media[index];
-      return MediaCard(
-        label: media.title,
-        onPressed: () => context.go('/media/${media.id}'),
-        iconPlaceholder: Icons.movie_creation_rounded,
-        imageUrl: media.posterUrl,
-        displayLabel: false,
-      );
-    },
-    itemCount: state.media.length,
+  final components = state.media.map((media) {
+    return MediaCard(
+      label: media.title,
+      onPressed: () => context.go('/media/${media.id}'),
+      iconPlaceholder: Icons.movie_creation_rounded,
+      imageUrl: media.posterUrl,
+      displayLabel: false,
+    );
+  }).toList();
+
+  return SizedBox(
     height: 200,
+    child: HorizontalScrollList(
+      components: components,
+    ),
   );
 }
