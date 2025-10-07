@@ -28,22 +28,8 @@ class _AccountDetailsPageState extends State<AccountDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.maybePop(context),
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: Icon(Icons.more_vert),
-          ),
-        ],
-        elevation: 0,
-        backgroundColor: AppColors.backgroundWhiteLight,
-        foregroundColor: AppColors.backgroundBlackDark,
-      ),
-      backgroundColor: AppColors.backgroundWhiteLight,
+      appBar: AppBar(),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
