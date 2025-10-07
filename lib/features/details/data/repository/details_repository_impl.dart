@@ -7,9 +7,9 @@ class DetailsRepositoryImpl implements DetailsRepository {
   DetailsRepositoryImpl(this._apiSource);
 
   @override
-  Future<DetailsEntity> getMediaDetails(String id, String lang) async {
+  Future<DetailsEntity> getMediaDetails(String id, String lang, type) async {
     try {
-      final mediaModel = await _apiSource.fetchMedia(id, lang);
+      final mediaModel = await _apiSource.fetchMedia(id, lang, type);
       return mediaModel.toEntity();
     } catch (error) {
       throw Exception('Failed to load media details: $error');

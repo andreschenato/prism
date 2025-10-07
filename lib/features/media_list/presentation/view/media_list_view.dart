@@ -75,7 +75,7 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
         final media = state.media[index];
         return MediaCard(
           label: media.title,
-          onPressed: () => context.go('/media/${media.id}'),
+          onPressed: () => context.go('/media/${media.id}?type=${media.type}'),
           iconPlaceholder: Icons.movie_creation_rounded,
           imageUrl: media.posterUrl,
           displayLabel: false,

@@ -13,7 +13,7 @@ class PersonResponseModel {
     this.photo,
   });
 
-  factory PersonResponseModel.fromJson(Map<String, dynamic> json) {
+  factory PersonResponseModel.fromJson(Map<dynamic, dynamic> json) {
     return PersonResponseModel(
       id: json['id'],
       name: json['name'],
