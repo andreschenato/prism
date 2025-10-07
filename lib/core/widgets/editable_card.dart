@@ -25,7 +25,7 @@ class EditableCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedColor = backgroundColor ?? AppColors.backgroundBlackLight;
+    final resolvedColor = backgroundColor ?? AppColors.backgroundWhiteMedium;
     final resolvedTextStyle = (textStyle ?? const TextStyle()).copyWith(
       color: textStyle?.color ?? AppColors.backgroundBlackMedium,
       letterSpacing: obscureLikeMock ? 2 : 0,
