@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:prism/core/theme/app_theme.dart';
 
-class SearchBarApp extends StatelessWidget {
+class CustomSearchBar extends StatelessWidget {
   final String hintText;
   final ValueChanged<String> onChanged;
 
-  const SearchBarApp({
+  const CustomSearchBar({
     super.key,
     required this.hintText,
     required this.onChanged,

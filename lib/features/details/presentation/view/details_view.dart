@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/core/widgets/horizontal_scroll_list.dart';
 import 'package:prism/core/widgets/horizontal_scroll_section.dart';
+import 'package:prism/core/widgets/icon_button.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/core/widgets/media_details.dart';
 import 'package:prism/core/widgets/mini_card.dart';
@@ -43,6 +44,14 @@ class DetailsView extends ConsumerWidget {
                     .map((director) => director.name)
                     .toList(),
                 writers: media.writers.map((writer) => writer.name).toList(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CustomIconButton(icon: Icons.favorite, onPressed: () {}, label: 'Favorite',),
+                  CustomIconButton(icon: Icons.movie, onPressed: () {}, label: 'Trailer',),
+                  CustomIconButton(icon: Icons.share, onPressed: () {}, label: 'Share',),
+                ],
               ),
               HorizontalScrollList(
                 components: media.genres

@@ -23,7 +23,7 @@ class MediaGridPage extends StatelessWidget {
         children: [
           SizedBox(
             height: 80,
-            child: SearchBarApp(
+            child: CustomSearchBar(
               hintText: 'Search $title',
               onChanged: (value) {
                 // TODO: Implement search functionality
