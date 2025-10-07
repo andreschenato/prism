@@ -18,7 +18,7 @@ class DetailsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(detailsViewModelProvider(mediaId));
 
-    return Scaffold(appBar: AppBar(), body: _buildBody(context, state, ref));
+    return Scaffold(appBar: AppBar(title: Text('Details'),), body: _buildBody(context, state, ref));
   }
 
   Widget _buildBody(BuildContext context, DetailsState state, WidgetRef ref) {

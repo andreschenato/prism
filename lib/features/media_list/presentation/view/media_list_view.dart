@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:prism/core/widgets/button.dart';
 import 'package:prism/core/widgets/horizontal_scroll_list.dart';
 import 'package:prism/core/widgets/media_card.dart';
+import 'package:prism/features/media_list/presentation/view/media_grid_page.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
 import 'package:prism/core/theme/app_theme.dart';
@@ -40,12 +41,19 @@ class MediaListView extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text('Perfect for you', style: AppTextStyles.h2),
-                
+
                     const Spacer(),
-                
+
                     GestureDetector(
                       onTap: () {
-                        // TODO: Go to a GridView with all items
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => MediaGridPage(
+                              title: 'Recommendations',
+                              media: state.media,
+                            ),
+                          ),
+                        );
                       },
                       child: Text('See all', style: TextStyle(
                         color: AppColors.primaryLight,
@@ -66,12 +74,19 @@ class MediaListView extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text('Your Favorites', style: AppTextStyles.h2),
-                
+
                     const Spacer(),
-                
+
                     GestureDetector(
                       onTap: () {
-                        // TODO: Go to a GridView with all items
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => MediaGridPage(
+                              title: 'Your Favorites',
+                              media: state.media,
+                            ),
+                          ),
+                        );
                       },
                       child: Text('See all', style: TextStyle(
                         color: AppColors.primaryLight,
@@ -83,7 +98,7 @@ class MediaListView extends ConsumerWidget {
                 ),
               ),
             ),
-            _buildGrid(context, state, ref),            
+            _buildGrid(context, state, ref),
           ],
         ),
       );
