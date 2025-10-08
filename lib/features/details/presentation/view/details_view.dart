@@ -48,9 +48,27 @@ class DetailsView extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomIconButton(icon: Icons.favorite, onPressed: () {}, label: 'Favorite',),
-                  CustomIconButton(icon: Icons.movie, onPressed: () {}, label: 'Trailer',),
-                  CustomIconButton(icon: Icons.share, onPressed: () {}, label: 'Share',),
+                  CustomIconButton(
+                    icon: Icons.favorite, 
+                    onPressed: () {
+                    // TODO: Implement favorite functionality
+                    }, 
+                    label: 'Favorite',
+                  ),
+                  CustomIconButton(
+                    icon: Icons.movie, 
+                    onPressed: () {
+                      // TODO: Implement trailer functionality
+                    }, 
+                    label: 'Trailer',
+                  ),
+                  CustomIconButton(
+                    icon: Icons.share, 
+                    onPressed: () {
+                      // TODO: Implement share functionality
+                    }, 
+                    label: 'Share',
+                  ),
                 ],
               ),
               HorizontalScrollList(
