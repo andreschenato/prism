@@ -41,11 +41,12 @@ class MediaGridPage extends StatelessWidget {
                     onPressed: () => context.go('/media/${item.id}'),
                     iconPlaceholder: Icons.movie_creation_rounded,
                     imageUrl: item.posterUrl,
+                    displayLabel: false,
                   );
                 },
                 itemCount: media.length,
                 axisCount: 3,
-                contentHeight: 210,
+                contentHeight: 180,
               ),
             ),
           ),

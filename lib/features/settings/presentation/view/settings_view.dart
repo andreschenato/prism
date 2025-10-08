@@ -1,4 +1,3 @@
-// lib/features/user/presentation/user_page.dart
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/core/theme/app_theme.dart';
 import 'package:prism/core/widgets/navigation_tile.dart';
 import 'package:prism/features/auth/data/sources/auth_api_source.dart';
-
 import 'account_details_view.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {

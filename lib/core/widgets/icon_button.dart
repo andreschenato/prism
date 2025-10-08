@@ -27,7 +27,10 @@ class CustomIconButton extends StatelessWidget {
           tooltip: 'Icon Button',
           iconSize: size,
         ),
-        Text(label ?? '', style: AppTextStyles.bodyM),
+        Visibility(
+          visible: label != null && label!.isNotEmpty,
+          child: Text(label ?? '', style: AppTextStyles.bodyM)
+          ),
       ],
     );
   }
