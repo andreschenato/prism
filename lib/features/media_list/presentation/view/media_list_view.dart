@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:prism/core/widgets/list_builder.dart';
+import 'package:prism/core/widgets/button.dart';
+import 'package:prism/core/widgets/horizontal_scroll_list.dart';
 import 'package:prism/core/widgets/media_card.dart';
+import 'package:prism/features/media_list/presentation/view/media_grid_page.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
+import 'package:prism/core/theme/app_theme.dart';
 
 class MediaListView extends ConsumerStatefulWidget {
   const MediaListView({super.key});
@@ -53,7 +56,76 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
           spacing: 20,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [Expanded(child: _buildGrid(context, state))],
+          children: [
+            Text('Hi, User!', style: AppTextStyles.h1),
+            CustomButton(label: 'Get new recommendations', iconData: Icons.auto_awesome, width: 160, onPressed: () => {}),
+            SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('Perfect for you', style: AppTextStyles.h2),
+
+                    const Spacer(),
+
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => MediaGridPage(
+                              title: 'Recommendations',
+                              media: state.media,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text('See all', style: TextStyle(
+                        color: AppColors.primaryLight,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            _buildGrid(context, state, ref),
+            SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('Your Favorites', style: AppTextStyles.h2),
+
+                    const Spacer(),
+
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => MediaGridPage(
+                              title: 'Your Favorites',
+                              media: state.media,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text('See all', style: TextStyle(
+                        color: AppColors.primaryLight,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            _buildGrid(context, state, ref),
+          ],
         ),
       );
     }
@@ -68,22 +140,21 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
     return const Center(child: Text('Press button to load more media'));
   }
 
-  Widget _buildGrid(BuildContext context, MediaListLoaded state) {
-    return ListBuilder(
-      controller: _scrollController,
-      itemBuilder: (context, index) {
-        final media = state.media[index];
-        return MediaCard(
-          label: media.title,
-          onPressed: () => context.go('/media/${media.id}?type=${media.type}'),
-          iconPlaceholder: Icons.movie_creation_rounded,
-          imageUrl: media.posterUrl,
-          displayLabel: false,
-        );
-      },
-      itemCount: state.media.length,
-      axisCount: 3,
-      contentHeight: 180,
+Widget _buildGrid(BuildContext context, MediaListLoaded state, WidgetRef ref) {
+  final components = state.media.map((media) {
+    return MediaCard(
+      label: media.title,
+      onPressed: () => context.go('/media/${media.id}'),
+      iconPlaceholder: Icons.movie_creation_rounded,
+      imageUrl: media.posterUrl,
+      displayLabel: false,
     );
-  }
+  }).toList();
+
+  return SizedBox(
+    height: 200,
+    child: HorizontalScrollList(
+      components: components,
+    ),
+  );
 }
