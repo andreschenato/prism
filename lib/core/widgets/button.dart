@@ -3,24 +3,33 @@ import 'package:prism/core/theme/app_theme.dart';
 
 class CustomButton extends StatelessWidget {
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final double? width;
-  final IconData? iconData; 
-
+  final IconData? iconData;
+  final bool reverseColors;
+  
   const CustomButton({
     super.key,
     required this.label,
-    required this.onPressed,
+    this.onPressed,
     this.width,
     this.iconData,
+    this.reverseColors = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    var primary = reverseColors
+        ? AppColors.backgroundWhiteLight
+        : AppColors.primaryMedium;
+    var secondary = reverseColors
+        ? AppColors.primaryMedium
+        : AppColors.backgroundWhiteLight;
+    
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
       textStyle: AppTextStyles.actionM,
-      backgroundColor: AppColors.primaryMedium,
-      foregroundColor: AppColors.backgroundWhiteLight,
+      backgroundColor: primary,
+      foregroundColor: secondary,
       shadowColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),

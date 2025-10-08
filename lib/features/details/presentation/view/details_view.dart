@@ -13,11 +13,13 @@ import 'package:prism/features/details/presentation/view_model/details_view_mode
 
 class DetailsView extends ConsumerWidget {
   final String mediaId;
-  const DetailsView(this.mediaId, {super.key});
+  final String type;
+  const DetailsView(this.mediaId, this.type, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(detailsViewModelProvider(mediaId));
+    final params = DetailsProviderParams(mediaId: mediaId, type: type);
+    final state = ref.watch(detailsViewModelProvider(params));
 
     return Scaffold(appBar: AppBar(title: Text('Details'),), body: _buildBody(context, state, ref));
   }
@@ -105,7 +107,8 @@ List<Widget> _buildSections(DetailsEntity media) {
           components: media.seasons!
               .map(
                 (season) => MediaCard(
-                  label: 'Season $season',
+                  label: season.name,
+                  imageUrl: season.photo,
                   onPressed: () {},
                   iconPlaceholder: Icons.tv_rounded,
                 ),

@@ -9,17 +9,43 @@ import 'package:prism/features/media_list/presentation/view_model/media_list_sta
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
 import 'package:prism/core/theme/app_theme.dart';
 
-class MediaListView extends ConsumerWidget {
+class MediaListView extends ConsumerStatefulWidget {
   const MediaListView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(mediaListViewModelProvider);
+  ConsumerState<MediaListView> createState() => _MediaListViewState();
+}
 
-    return Scaffold(body: _buildBody(context, state, ref));
+class _MediaListViewState extends ConsumerState<MediaListView> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
   }
 
-  Widget _buildBody(BuildContext context, MediaListState state, WidgetRef ref) {
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 100) {
+      ref.read(mediaListViewModelProvider.notifier).fetchMedia();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(mediaListViewModelProvider);
+
+    return Scaffold(body: _buildBody(context, state));
+  }
+
+  Widget _buildBody(BuildContext context, MediaListState state) {
     if (state is MediaListLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -113,7 +139,6 @@ class MediaListView extends ConsumerWidget {
     }
     return const Center(child: Text('Press button to load more media'));
   }
-}
 
 Widget _buildGrid(BuildContext context, MediaListLoaded state, WidgetRef ref) {
   final components = state.media.map((media) {
