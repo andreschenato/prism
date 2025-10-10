@@ -58,7 +58,12 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Hi, User!', style: AppTextStyles.h1),
-            CustomButton(label: 'Get new recommendations', iconData: Icons.auto_awesome, width: 160, onPressed: () => {}),
+            CustomButton(
+              label: 'Get new recommendations',
+              iconData: Icons.auto_awesome,
+              width: 160,
+              onPressed: () => {},
+            ),
             SizedBox(
               width: double.infinity,
               child: Padding(
@@ -74,18 +79,19 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => MediaGridPage(
-                              title: 'Recommendations',
-                              media: state.media,
-                            ),
+                            builder: (context) =>
+                                MediaGridPage(title: 'Recommendations'),
                           ),
                         );
                       },
-                      child: Text('See all', style: TextStyle(
-                        color: AppColors.primaryLight,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      )),
+                      child: Text(
+                        'See all',
+                        style: TextStyle(
+                          color: AppColors.primaryLight,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -107,18 +113,19 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => MediaGridPage(
-                              title: 'Your Favorites',
-                              media: state.media,
-                            ),
+                            builder: (context) =>
+                                MediaGridPage(title: 'Your Favorites'),
                           ),
                         );
                       },
-                      child: Text('See all', style: TextStyle(
-                        color: AppColors.primaryLight,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      )),
+                      child: Text(
+                        'See all',
+                        style: TextStyle(
+                          color: AppColors.primaryLight,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -140,21 +147,24 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
     return const Center(child: Text('Press button to load more media'));
   }
 
-Widget _buildGrid(BuildContext context, MediaListLoaded state, WidgetRef ref) {
-  final components = state.media.map((media) {
-    return MediaCard(
-      label: media.title,
-      onPressed: () => context.go('/media/${media.id}'),
-      iconPlaceholder: Icons.movie_creation_rounded,
-      imageUrl: media.posterUrl,
-      displayLabel: false,
-    );
-  }).toList();
+  Widget _buildGrid(
+    BuildContext context,
+    MediaListLoaded state,
+    WidgetRef ref,
+  ) {
+    final components = state.media.map((media) {
+      return MediaCard(
+        label: media.title,
+        onPressed: () => context.go('/media/${media.id}?type=${media.type}'),
+        iconPlaceholder: Icons.movie_creation_rounded,
+        imageUrl: media.posterUrl,
+        displayLabel: false,
+      );
+    }).toList();
 
-  return SizedBox(
-    height: 200,
-    child: HorizontalScrollList(
-      components: components,
-    ),
-  );
+    return SizedBox(
+      height: 200,
+      child: HorizontalScrollList(components: components),
+    );
+  }
 }
