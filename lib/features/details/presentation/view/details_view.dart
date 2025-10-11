@@ -21,10 +21,18 @@ class DetailsView extends ConsumerWidget {
     final params = DetailsProviderParams(mediaId: mediaId, type: type);
     final state = ref.watch(detailsViewModelProvider(params));
 
-    return Scaffold(appBar: AppBar(title: Text('Details'),), body: _buildBody(context, state, ref));
+    return Scaffold(
+      appBar: AppBar(title: Text('Details')),
+      body: _buildBody(context, state, ref, params),
+    );
   }
 
-  Widget _buildBody(BuildContext context, DetailsState state, WidgetRef ref) {
+  Widget _buildBody(
+    BuildContext context,
+    DetailsState state,
+    WidgetRef ref,
+    DetailsProviderParams params,
+  ) {
     if (state is DetailsLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -51,24 +59,31 @@ class DetailsView extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomIconButton(
-                    icon: Icons.favorite, 
+                    icon: Icons.favorite,
                     onPressed: () {
-                    // TODO: Implement favorite functionality
-                    }, 
+                      ref
+                          .read(detailsViewModelProvider(params).notifier)
+                          .favoriteMedia(
+                            media.posterUrl!,
+                            media.id,
+                            type,
+                            media.title,
+                          );
+                    },
                     label: 'Favorite',
                   ),
                   CustomIconButton(
-                    icon: Icons.movie, 
+                    icon: Icons.movie,
                     onPressed: () {
                       // TODO: Implement trailer functionality
-                    }, 
+                    },
                     label: 'Trailer',
                   ),
                   CustomIconButton(
-                    icon: Icons.share, 
+                    icon: Icons.share,
                     onPressed: () {
                       // TODO: Implement share functionality
-                    }, 
+                    },
                     label: 'Share',
                   ),
                 ],

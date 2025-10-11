@@ -10,6 +10,7 @@ import 'package:prism/features/complete_profile/domain/repository/complete_profi
 import 'package:prism/features/complete_profile/domain/repository/genres_repository.dart';
 import 'package:prism/features/details/data/repository/details_repository_impl.dart';
 import 'package:prism/features/details/data/sources/details_api_source.dart';
+import 'package:prism/features/details/data/sources/favorite_source.dart';
 import 'package:prism/features/details/domain/repository/details_repository.dart';
 import 'package:prism/features/media_list/data/repository/media_repository_impl.dart';
 import 'package:prism/features/media_list/data/sources/media_api_source.dart';
@@ -23,8 +24,9 @@ void setupLocator() {
     () => MediaRepositoryImpl(locator<MediaApiSource>()),
   );
   locator.registerLazySingleton(() => DetailsApiSource());
+  locator.registerLazySingleton(() => FavoriteSource());
   locator.registerLazySingleton<DetailsRepository>(
-    () => DetailsRepositoryImpl(locator<DetailsApiSource>()),
+    () => DetailsRepositoryImpl(locator<DetailsApiSource>(), locator<FavoriteSource>()),
   );
   locator.registerLazySingleton(() => AuthApiSource());
   locator.registerLazySingleton<AuthRepository>(

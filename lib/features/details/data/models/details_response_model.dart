@@ -80,7 +80,7 @@ class DetailsResponseModel {
       id: json['id'],
       title: json['title'] ?? json['name'],
       plot: json['overview'],
-      poster: 'https://image.tmdb.org/t/p/w185/${json['poster_path']}',
+      poster: 'https://image.tmdb.org/t/p/w185${json['poster_path']}',
       genres: genres,
       startYear: DateTime.parse(startDate).year,
       endYear: DateTime.tryParse(endDate)?.year,

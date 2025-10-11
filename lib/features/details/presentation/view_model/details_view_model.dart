@@ -4,6 +4,7 @@ import 'package:prism/features/complete_profile/presentation/view_model/complete
 import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_view_model.dart';
 import 'package:prism/features/details/domain/repository/details_repository.dart';
 import 'package:prism/features/details/presentation/view_model/details_state.dart';
+import 'package:prism/features/media_list/domain/entities/media_entity.dart';
 
 class DetailsProviderParams {
   final String mediaId;
@@ -70,5 +71,24 @@ class DetailsViewModel extends StateNotifier<DetailsState> {
         state = DetailsError(error.toString());
       }
     }
+  }
+
+  Future<MediaEntity?> favoriteMedia(
+    String poster,
+    int id,
+    String type,
+    String title,
+  ) async {
+    try {
+      final favorited = await _repository.favoriteMedia(id, poster, type, title);
+
+      return favorited;
+    } catch (error) {
+      if (mounted) {
+        state = DetailsError(error.toString());
+      }
+    }
+
+    return null;
   }
 }
