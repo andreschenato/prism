@@ -76,13 +76,14 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                     const Spacer(),
 
                     GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
+                      onTap: () async {
+                        await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) =>
                                 MediaGridPage(title: 'Recommendations'),
                           ),
                         );
+                      ref.read(mediaListViewModelProvider.notifier).clearSearch();
                       },
                       child: Text(
                         'See all',
