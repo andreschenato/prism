@@ -21,6 +21,7 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
   final String? lang;
   int _page = 1;
   bool _isLoading = false;
+  String? _currentQuery;
 
   MediaListViewModel(this._repository, {this.lang})
     : super(MediaListInitial()) {
@@ -32,26 +33,41 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     _isLoading = true;
 
     try {
-      if (_page == 1) {
+        final currentMedia = state is MediaListLoaded
+      ? (state as MediaListLoaded).media
+      : <MediaEntity>[];
+
+      if (_page == 1 && _currentQuery != null) {
         state = MediaListLoading();
       }
 
-      final newMedia = await _repository.getMedia(
-        page: _page,
-        lang: lang ?? 'en-US',
-      );
+      final List<MediaEntity> newMedia;
+
+      if (_currentQuery != null && _currentQuery!.isNotEmpty) {
+        // Lógica de busca
+        newMedia = await _repository.searchMedia(
+          query: _currentQuery!,
+          page: _page,
+          lang: lang ?? 'en-US',
+        );
+      } else {
+        // Lógica padrão de carregar mídia
+        newMedia = await _repository.getMedia(
+          page: _page,
+          lang: lang ?? 'en-US',
+        );
+      }
 
       if (!mounted) return;
-
-      final currentMedia = state is MediaListLoaded
-          ? (state as MediaListLoaded).media
-          : <MediaEntity>[];
 
       if (newMedia.isEmpty) {
         state = MediaListLoaded(currentMedia, hasMore: false);
       } else {
         _page++;
-        state = MediaListLoaded(currentMedia + newMedia, hasMore: true);
+        final fullList = (_page == 2) // Page foi incrementada, então checamos se era a primeira
+            ? newMedia
+            : currentMedia + newMedia;
+        state = MediaListLoaded(fullList, hasMore: true);
       }
     } catch (error) {
       if (mounted) {
@@ -60,5 +76,23 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     } finally {
       _isLoading = false;
     }
+  }
+
+  Future<void> searchMedia(String query) async {
+    if (_currentQuery == query) return;
+
+    _page = 1;
+    _currentQuery = query;
+    state = MediaListLoading();
+    await fetchMedia();
+  }  
+
+  Future<void> clearSearch() async {
+    if (_currentQuery == null) return;
+
+    _page = 1;
+    _currentQuery = null;
+    state = MediaListLoading();
+    await fetchMedia();
   }
 }

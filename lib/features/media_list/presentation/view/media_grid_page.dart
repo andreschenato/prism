@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:prism/core/widgets/list_builder.dart';
@@ -18,6 +18,7 @@ class MediaGridPage extends ConsumerStatefulWidget {
 
 class _MediaGridPageState extends ConsumerState<MediaGridPage> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _MediaGridPageState extends ConsumerState<MediaGridPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -49,9 +51,20 @@ class _MediaGridPageState extends ConsumerState<MediaGridPage> {
           SizedBox(
             height: 80,
             child: CustomSearchBar(
+              controller: _searchController,
               hintText: 'Search ${widget.title}',
               onChanged: (value) {
                 // TODO: Implement search functionality
+                print('Search query: $value');
+                if (value.isEmpty) {
+                  ref.read(mediaListViewModelProvider.notifier).clearSearch();
+                }
+              },
+              onSubmitted: (value) {
+                print('Search submitted: $value');
+                if (value.isNotEmpty) {
+                  ref.read(mediaListViewModelProvider.notifier).searchMedia(value);
+                }
               },
             ),
           ),
