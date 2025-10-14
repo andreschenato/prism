@@ -21,7 +21,7 @@ final mediaListViewModelProvider =
     });
 
 final favoritesListViewModelProvider =
-    StateNotifierProvider<MediaListViewModel, MediaListState>((ref) {
+    StateNotifierProvider.autoDispose<MediaListViewModel, MediaListState>((ref) {
       final profileState = ref.watch(completeProfileProvider);
       String? lang;
       if (profileState is ProfileSet) {
@@ -86,24 +86,24 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     _isLoading = true;
 
     try {
-      if (_page == 1) {
-        state = MediaListLoading();
-      }
+      // if (_page == 1) {
+      //   state = MediaListLoading();
+      // }
 
       final favorites = await _repository.getFavorites();
 
       if (!mounted) return;
 
-      final currentMedia = state is MediaListLoaded
-          ? (state as MediaListLoaded).media
-          : <MediaEntity>[];
+      // final currentMedia = state is MediaListLoaded
+      //     ? (state as MediaListLoaded).media
+      //     : <MediaEntity>[];
 
-      if (favorites.isEmpty) {
-        state = MediaListLoaded(currentMedia, hasMore: false);
-      } else {
-        _page++;
-        state = MediaListLoaded(currentMedia + favorites, hasMore: true);
-      }
+      // if (favorites.isEmpty) {
+        state = MediaListLoaded(favorites, hasMore: false);
+      // } else {
+      //   _page++;
+      //   state = MediaListLoaded(currentMedia + favorites, hasMore: true);
+      // }
     } catch (error) {
       if (mounted) {
         state = MediaListError(error.toString());

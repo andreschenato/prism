@@ -4,52 +4,28 @@ import 'package:go_router/go_router.dart';
 import 'package:prism/core/widgets/button.dart';
 import 'package:prism/core/widgets/horizontal_scroll_list.dart';
 import 'package:prism/core/widgets/media_card.dart';
+import 'package:prism/features/media_list/presentation/view/favorites_list_view.dart';
 import 'package:prism/features/media_list/presentation/view/media_grid_page.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
-import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
+import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart' as providers;
 import 'package:prism/core/theme/app_theme.dart';
 
-class MediaListView extends ConsumerStatefulWidget {
+class MediaListView extends ConsumerWidget {
   const MediaListView({super.key});
 
   @override
-  ConsumerState<MediaListView> createState() => _MediaListViewState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final genericState = ref.watch(providers.mediaListViewModelProvider);
+    final favoritesState = ref.watch(providers.favoritesListViewModelProvider);
 
-class _MediaListViewState extends ConsumerState<MediaListView> {
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
+    return Scaffold(body: _buildBody(context, genericState, favoritesState, ref));
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 100) {
-      ref.read(mediaListViewModelProvider.notifier).fetchMedia();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final state = ref.watch(mediaListViewModelProvider);
-
-    return Scaffold(body: _buildBody(context, state));
-  }
-
-  Widget _buildBody(BuildContext context, MediaListState state) {
-    if (state is MediaListLoading) {
+  Widget _buildBody(BuildContext context, MediaListState genericState, MediaListState favoritesState, WidgetRef ref) {
+    if (genericState is MediaListLoading || favoritesState is MediaListLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (state is MediaListLoaded) {
+    if (genericState is MediaListLoaded && favoritesState is MediaListLoaded) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
@@ -97,7 +73,7 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                 ),
               ),
             ),
-            _buildGrid(context, state, ref),
+            _buildGrid(context, genericState),
             SizedBox(
               width: double.infinity,
               child: Padding(
@@ -114,7 +90,7 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) =>
-                                MediaGridPage(title: 'Your Favorites'),
+                                FavoritesListView(title: 'Your Favorites'),
                           ),
                         );
                       },
@@ -131,27 +107,23 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                 ),
               ),
             ),
-            _buildGrid(context, state, ref),
+            _buildGrid(context, favoritesState),
           ],
         ),
       );
     }
-    if (state is MediaListError) {
+    if (genericState is MediaListError && favoritesState is MediaListError) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('Error loading items: ${state.message}')],
+          children: [Text('Error loading items: ${genericState.message} and ${favoritesState.message}')],
         ),
       );
     }
-    return const Center(child: Text('Press button to load more media'));
+    return const Center(child: CircularProgressIndicator());
   }
 
-  Widget _buildGrid(
-    BuildContext context,
-    MediaListLoaded state,
-    WidgetRef ref,
-  ) {
+  Widget _buildGrid(BuildContext context, MediaListLoaded state) {
     final components = state.media.map((media) {
       return MediaCard(
         label: media.title,

@@ -12,34 +12,14 @@ import 'package:prism/features/details/presentation/view_model/details_state.dar
 import 'package:prism/features/details/presentation/view_model/details_view_model.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
 
-class DetailsView extends ConsumerStatefulWidget {
+class DetailsView extends ConsumerWidget {
   final String mediaId;
   final String type;
   const DetailsView(this.mediaId, this.type, {super.key});
 
   @override
-  ConsumerState<DetailsView> createState() => _DetailsViewState();
-}
-
-class _DetailsViewState extends ConsumerState<DetailsView> {
-  bool _isFavorite = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final params = DetailsProviderParams(
-      mediaId: widget.mediaId,
-      type: widget.type,
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final params = DetailsProviderParams(mediaId: mediaId, type: type);
     final state = ref.watch(detailsViewModelProvider(params));
 
     return Scaffold(
@@ -59,6 +39,7 @@ class _DetailsViewState extends ConsumerState<DetailsView> {
     }
     if (state is DetailsLoaded) {
       var media = state.media;
+
       return Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -80,18 +61,15 @@ class _DetailsViewState extends ConsumerState<DetailsView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomIconButton(
-                    color: _isFavorite ? AppColors.primaryDark : null,
+                    color: media.isFavorite! ? AppColors.primaryDark : null,
                     icon: Icons.favorite,
                     onPressed: () {
-                      setState(() {
-                        _isFavorite = !_isFavorite;
-                      });
                       ref
                           .read(detailsViewModelProvider(params).notifier)
                           .favoriteMedia(
                             media.posterUrl!,
                             media.id,
-                            widget.type,
+                            type,
                             media.title,
                           );
 
