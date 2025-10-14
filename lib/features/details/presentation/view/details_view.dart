@@ -10,15 +10,36 @@ import 'package:prism/core/widgets/mini_card.dart';
 import 'package:prism/features/details/domain/entities/details_entity.dart';
 import 'package:prism/features/details/presentation/view_model/details_state.dart';
 import 'package:prism/features/details/presentation/view_model/details_view_model.dart';
+import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
 
-class DetailsView extends ConsumerWidget {
+class DetailsView extends ConsumerStatefulWidget {
   final String mediaId;
   final String type;
   const DetailsView(this.mediaId, this.type, {super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final params = DetailsProviderParams(mediaId: mediaId, type: type);
+  ConsumerState<DetailsView> createState() => _DetailsViewState();
+}
+
+class _DetailsViewState extends ConsumerState<DetailsView> {
+  bool _isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final params = DetailsProviderParams(
+      mediaId: widget.mediaId,
+      type: widget.type,
+    );
     final state = ref.watch(detailsViewModelProvider(params));
 
     return Scaffold(
@@ -59,16 +80,22 @@ class DetailsView extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomIconButton(
+                    color: _isFavorite ? AppColors.primaryDark : null,
                     icon: Icons.favorite,
                     onPressed: () {
+                      setState(() {
+                        _isFavorite = !_isFavorite;
+                      });
                       ref
                           .read(detailsViewModelProvider(params).notifier)
                           .favoriteMedia(
                             media.posterUrl!,
                             media.id,
-                            type,
+                            widget.type,
                             media.title,
                           );
+
+                      ref.invalidate(favoritesListViewModelProvider);
                     },
                     label: 'Favorite',
                   ),

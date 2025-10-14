@@ -14,6 +14,7 @@ class DetailsResponseModel {
   final List<PersonResponseModel> writers;
   final List<PersonResponseModel> actors;
   final List<SeasonResponseModel>? seasons;
+  final bool? isFavorite;
 
   DetailsResponseModel({
     required this.id,
@@ -27,6 +28,7 @@ class DetailsResponseModel {
     required this.writers,
     required this.actors,
     this.seasons,
+    this.isFavorite = false,
   });
 
   factory DetailsResponseModel.fromJson(Map<String, dynamic> json) {
@@ -88,6 +90,7 @@ class DetailsResponseModel {
       writers: writers,
       actors: actors,
       seasons: seasons,
+      isFavorite: json['is_favorite'],
     );
   }
 
@@ -104,6 +107,7 @@ class DetailsResponseModel {
       writers: writers.map((writer) => writer.toEntity()).toList(),
       actors: actors.map((actor) => actor.toEntity()).toList(),
       seasons: seasons?.map((season) => season.toEntity()).toList(),
+      isFavorite: isFavorite,
     );
   }
 }

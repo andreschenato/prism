@@ -13,18 +13,37 @@ final mediaListViewModelProvider =
       if (profileState is ProfileSet) {
         lang = profileState.user.language;
       }
-      return MediaListViewModel(locator<MediaRepository>(), lang: lang);
+      return MediaListViewModel(
+        locator<MediaRepository>(),
+        lang: lang,
+        type: "list",
+      );
+    });
+
+final favoritesListViewModelProvider =
+    StateNotifierProvider<MediaListViewModel, MediaListState>((ref) {
+      final profileState = ref.watch(completeProfileProvider);
+      String? lang;
+      if (profileState is ProfileSet) {
+        lang = profileState.user.language;
+      }
+      return MediaListViewModel(
+        locator<MediaRepository>(),
+        lang: lang,
+        type: "favorites",
+      );
     });
 
 class MediaListViewModel extends StateNotifier<MediaListState> {
   final MediaRepository _repository;
   final String? lang;
+  final String? type;
   int _page = 1;
   bool _isLoading = false;
 
-  MediaListViewModel(this._repository, {this.lang})
+  MediaListViewModel(this._repository, {this.lang, this.type})
     : super(MediaListInitial()) {
-    fetchMedia();
+    type == "favorites" ? fetchFavorites() : fetchMedia();
   }
 
   Future<void> fetchMedia() async {
@@ -52,6 +71,38 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
       } else {
         _page++;
         state = MediaListLoaded(currentMedia + newMedia, hasMore: true);
+      }
+    } catch (error) {
+      if (mounted) {
+        state = MediaListError(error.toString());
+      }
+    } finally {
+      _isLoading = false;
+    }
+  }
+
+  Future<void> fetchFavorites() async {
+    if (_isLoading) return;
+    _isLoading = true;
+
+    try {
+      if (_page == 1) {
+        state = MediaListLoading();
+      }
+
+      final favorites = await _repository.getFavorites();
+
+      if (!mounted) return;
+
+      final currentMedia = state is MediaListLoaded
+          ? (state as MediaListLoaded).media
+          : <MediaEntity>[];
+
+      if (favorites.isEmpty) {
+        state = MediaListLoaded(currentMedia, hasMore: false);
+      } else {
+        _page++;
+        state = MediaListLoaded(currentMedia + favorites, hasMore: true);
       }
     } catch (error) {
       if (mounted) {

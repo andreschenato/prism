@@ -34,7 +34,7 @@ class FavoriteSource {
         .doc(_user?.uid)
         .collection(type)
         .doc(id.toString())
-        .set({"poster_path": poster, "title": title});
+        .set({"poster_url": poster, "title": title});
 
     return MediaEntity(id: id, title: title, type: type, posterUrl: poster);
   }

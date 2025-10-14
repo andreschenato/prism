@@ -80,7 +80,12 @@ class DetailsViewModel extends StateNotifier<DetailsState> {
     String title,
   ) async {
     try {
-      final favorited = await _repository.favoriteMedia(id, poster, type, title);
+      final favorited = await _repository.favoriteMedia(
+        id,
+        poster,
+        type,
+        title,
+      );
 
       return favorited;
     } catch (error) {
