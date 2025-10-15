@@ -61,4 +61,35 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
       _isLoading = false;
     }
   }
+
+  Future<void> fetchMediaFromRecommendations(
+    List<Map<String, String>> recommendations,
+  ) async {
+    if (_isLoading) return;
+    _isLoading = true;
+
+    print('Fetching media for recommendations: $recommendations');
+
+    try {
+      final recommendedMedia = await _repository.getMediaDetails(
+        recommendations,
+      );
+
+      print('Fetched recommended media: $recommendedMedia');
+
+      if (!mounted) return;
+
+      final currentMedia = state is MediaListLoaded
+          ? (state as MediaListLoaded).media
+          : <MediaEntity>[];
+
+      state = MediaListLoaded(currentMedia + recommendedMedia, hasMore: true);
+    } catch (error) {
+      if (mounted) {
+        state = MediaListError(error.toString());
+      }
+    } finally {
+      _isLoading = false;
+    }
+  }
 }

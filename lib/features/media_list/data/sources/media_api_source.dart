@@ -28,13 +28,72 @@ class MediaApiSource {
       return {...s, 'type': 'tv'};
     }).toList();
 
-    final resultsList = [
-      ...movieList,
-      ...tvList,
-    ];
+    final resultsList = [...movieList, ...tvList];
 
     return resultsList
         .map((mediaJson) => MediaResponseModel.fromJson(mediaJson))
         .toList();
+  }
+
+  /// Fetch media details from TMDB using media IDs and types
+  Future<List<MediaResponseModel>> fetchMediaDetailsFromTMDB(
+    List<Map<String, String>> mediaItems,
+  ) async {
+    String? apiKey = dotenv.env['TMDB_API_KEY'];
+    if (apiKey == null || apiKey.isEmpty) {
+      throw Exception('TMDB_API_KEY not found in .env');
+    }
+
+    print('Fetching media details for items: $mediaItems');
+
+    // Cria todas as futures de uma vez
+    final List<Future<MediaResponseModel>> futures = mediaItems.map((
+      item,
+    ) async {
+      final id = item['id'];
+      final type = item['type'];
+      if (id == null || type == null) {
+        throw Exception('Invalid media item: $item');
+      }
+
+      final endpoint = type == 'movie' ? '/3/movie/$id' : '/3/tv/$id';
+
+      try {
+        final media = await _apiClient.get(
+          endpoint,
+          headers: {'Authorization': 'Bearer $apiKey'},
+        );
+
+        if (media == null) {
+          print(
+            'Media not found by ID, attempting search by title: ${item['title']}',
+          );
+
+          final searchResults = await _apiClient.get(
+            '/3/search/movie?query=${item['title']}',
+            headers: {'Authorization': 'Bearer $apiKey'},
+          );
+
+          if (searchResults != null &&
+              searchResults['results'] != null &&
+              searchResults['results'].isNotEmpty) {
+            final firstResult = searchResults['results'][0];
+            return MediaResponseModel.fromJson({...firstResult, 'type': type});
+          }
+        }
+
+        print('Fetched individual media data: $media');
+
+        return MediaResponseModel.fromJson({...media, 'type': type});
+      } catch (e) {
+        print('Error fetching media: $e');
+        rethrow;
+      }
+    }).toList();
+
+    // Executa todas as requisições em paralelo
+    final mediaList = await Future.wait(futures);
+
+    return mediaList;
   }
 }

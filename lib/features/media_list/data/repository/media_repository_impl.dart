@@ -7,12 +7,30 @@ class MediaRepositoryImpl implements MediaRepository {
   MediaRepositoryImpl(this._apiSource);
 
   @override
-  Future<List<MediaEntity>> getMedia({int page = 1, String lang = 'en-US'}) async {
+  Future<List<MediaEntity>> getMedia({
+    int page = 1,
+    String lang = 'en-US',
+  }) async {
     try {
       final mediaModels = await _apiSource.fetchMedia(page: page, lang: lang);
       return mediaModels.map((model) => model.toEntity()).toList();
     } catch (error) {
       throw Exception('Failed to load media list: $error');
+    }
+  }
+
+  @override
+  Future<List<MediaEntity>> getMediaDetails(
+    List<Map<String, String>> recommendations,
+  ) async {
+    try {
+      final mediaModels = await _apiSource.fetchMediaDetailsFromTMDB(
+        recommendations,
+      );
+      return mediaModels.map((model) => model.toEntity()).toList();
+    } catch (error) {
+      print('Error fetching media details: $error');
+      throw Exception('Failed to load media details: $error');
     }
   }
 }
