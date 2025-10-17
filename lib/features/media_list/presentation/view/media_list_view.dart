@@ -52,13 +52,14 @@ class MediaListView extends ConsumerWidget {
                     const Spacer(),
 
                     GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
+                      onTap: () async {
+                        await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) =>
                                 MediaGridPage(title: 'Recommendations'),
                           ),
                         );
+                      ref.read(providers.mediaListViewModelProvider.notifier).clearSearch();
                       },
                       child: Text(
                         'See all',

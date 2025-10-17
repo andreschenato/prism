@@ -9,7 +9,10 @@ class MediaRepositoryImpl implements MediaRepository {
   MediaRepositoryImpl(this._apiSource, this._favoritesSource);
 
   @override
-  Future<List<MediaEntity>> getMedia({int page = 1, String lang = 'en-US'}) async {
+  Future<List<MediaEntity>> getMedia({
+    int page = 1,
+    String lang = 'en-US',
+  }) async {
     try {
       final mediaModels = await _apiSource.fetchMedia(page: page, lang: lang);
       return mediaModels.map((model) => model.toEntity()).toList();
@@ -25,6 +28,24 @@ class MediaRepositoryImpl implements MediaRepository {
       return favorites;
     } catch (error) {
       throw Exception('Failed to load favorites list: $error');
+    }
+  }
+
+  @override
+  Future<List<MediaEntity>> searchMedia({
+    String query = '',
+    int page = 1,
+    String lang = 'en-US',
+  }) async {
+    try {
+      final mediaModels = await _apiSource.searchMedia(
+        query: query,
+        page: page,
+        lang: lang,
+      );
+      return mediaModels.map((model) => model.toEntity()).toList();
+    } catch (error) {
+      throw Exception('Failed to search media: $error');
     }
   }
 }

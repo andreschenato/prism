@@ -21,7 +21,9 @@ final mediaListViewModelProvider =
     });
 
 final favoritesListViewModelProvider =
-    StateNotifierProvider.autoDispose<MediaListViewModel, MediaListState>((ref) {
+    StateNotifierProvider.autoDispose<MediaListViewModel, MediaListState>((
+      ref,
+    ) {
       final profileState = ref.watch(completeProfileProvider);
       String? lang;
       if (profileState is ProfileSet) {
@@ -40,6 +42,7 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
   final String? type;
   int _page = 1;
   bool _isLoading = false;
+  String? _currentQuery;
 
   MediaListViewModel(this._repository, {this.lang, this.type})
     : super(MediaListInitial()) {
@@ -51,26 +54,37 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     _isLoading = true;
 
     try {
-      if (_page == 1) {
-        state = MediaListLoading();
-      }
-
-      final newMedia = await _repository.getMedia(
-        page: _page,
-        lang: lang ?? 'en-US',
-      );
-
-      if (!mounted) return;
-
       final currentMedia = state is MediaListLoaded
           ? (state as MediaListLoaded).media
           : <MediaEntity>[];
+
+      if (_page == 1 && _currentQuery != null) {
+        state = MediaListLoading();
+      }
+
+      final List<MediaEntity> newMedia;
+
+      if (_currentQuery != null && _currentQuery!.isNotEmpty) {
+        newMedia = await _repository.searchMedia(
+          query: _currentQuery!,
+          page: _page,
+          lang: lang ?? 'en-US',
+        );
+      } else {
+        newMedia = await _repository.getMedia(
+          page: _page,
+          lang: lang ?? 'en-US',
+        );
+      }
+
+      if (!mounted) return;
 
       if (newMedia.isEmpty) {
         state = MediaListLoaded(currentMedia, hasMore: false);
       } else {
         _page++;
-        state = MediaListLoaded(currentMedia + newMedia, hasMore: true);
+        final fullList = (_page == 2) ? newMedia : currentMedia + newMedia;
+        state = MediaListLoaded(fullList, hasMore: true);
       }
     } catch (error) {
       if (mounted) {
@@ -99,7 +113,7 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
       //     : <MediaEntity>[];
 
       // if (favorites.isEmpty) {
-        state = MediaListLoaded(favorites, hasMore: false);
+      state = MediaListLoaded(favorites, hasMore: false);
       // } else {
       //   _page++;
       //   state = MediaListLoaded(currentMedia + favorites, hasMore: true);
@@ -111,5 +125,23 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     } finally {
       _isLoading = false;
     }
+  }
+
+  Future<void> searchMedia(String query) async {
+    if (_currentQuery == query) return;
+
+    _page = 1;
+    _currentQuery = query;
+    state = MediaListLoading();
+    await fetchMedia();
+  }
+
+  Future<void> clearSearch() async {
+    if (_currentQuery == null) return;
+
+    _page = 1;
+    _currentQuery = null;
+    state = MediaListLoading();
+    await fetchMedia();
   }
 }

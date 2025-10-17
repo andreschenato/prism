@@ -46,15 +46,15 @@ class _FavoritesListViewState extends ConsumerState<FavoritesListView> {
       appBar: AppBar(title: Text(widget.title)),
       body: Column(
         children: [
-          SizedBox(
-            height: 80,
-            child: CustomSearchBar(
-              hintText: 'Search ${widget.title}',
-              onChanged: (value) {
-                // TODO: Implement search functionality
-              },
-            ),
-          ),
+          // SizedBox(
+          //   height: 80,
+          //   child: CustomSearchBar(
+          //     hintText: 'Search ${widget.title}',
+          //     onChanged: (value) {
+          //       // TODO: Implement search functionality
+          //     },
+          //   ),
+          // ),
           Expanded(child: _buildBody(context, state)),
         ],
       ),

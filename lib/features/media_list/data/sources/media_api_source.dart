@@ -37,4 +37,38 @@ class MediaApiSource {
         .map((mediaJson) => MediaResponseModel.fromJson(mediaJson))
         .toList();
   }
+
+  Future<List<MediaResponseModel>> searchMedia({
+    String query = '',
+    int page = 1,
+    String lang = 'en-US',
+  }) async {
+    String? apiKey = dotenv.env['TMDB_API_KEY'];
+    var headers = <String, String>{'Authorization': 'Bearer $apiKey'};
+    final movies = await _apiClient.get(
+      '/3/search/movie?query=$query&include_adult=false&include_video=false&language=$lang&page=$page',
+      headers: Map.from(headers),
+    );
+    final series = await _apiClient.get(
+      '/3/search/tv?query=$query&include_adult=false&include_video=false&language=$lang&page=$page',
+      headers: Map.from(headers),
+    );
+
+    final movieList = (movies['results'] as List).map((m) {
+      return {...m, 'type': 'movie'};
+    }).toList();
+
+    final tvList = (series['results'] as List).map((s) {
+      return {...s, 'type': 'tv'};
+    }).toList();
+
+    final resultsList = [
+      ...movieList,
+      ...tvList,
+    ];
+
+    return resultsList
+        .map((mediaJson) => MediaResponseModel.fromJson(mediaJson))
+        .toList();
+  }  
 }
