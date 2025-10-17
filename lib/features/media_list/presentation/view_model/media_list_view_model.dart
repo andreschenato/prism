@@ -44,14 +44,12 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
       final List<MediaEntity> newMedia;
 
       if (_currentQuery != null && _currentQuery!.isNotEmpty) {
-        // Lógica de busca
         newMedia = await _repository.searchMedia(
           query: _currentQuery!,
           page: _page,
           lang: lang ?? 'en-US',
         );
       } else {
-        // Lógica padrão de carregar mídia
         newMedia = await _repository.getMedia(
           page: _page,
           lang: lang ?? 'en-US',
@@ -64,7 +62,7 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
         state = MediaListLoaded(currentMedia, hasMore: false);
       } else {
         _page++;
-        final fullList = (_page == 2) // Page foi incrementada, então checamos se era a primeira
+        final fullList = (_page == 2)
             ? newMedia
             : currentMedia + newMedia;
         state = MediaListLoaded(fullList, hasMore: true);

@@ -54,14 +54,11 @@ class _MediaGridPageState extends ConsumerState<MediaGridPage> {
               controller: _searchController,
               hintText: 'Search ${widget.title}',
               onChanged: (value) {
-                // TODO: Implement search functionality
-                print('Search query: $value');
                 if (value.isEmpty) {
                   ref.read(mediaListViewModelProvider.notifier).clearSearch();
                 }
               },
               onSubmitted: (value) {
-                print('Search submitted: $value');
                 if (value.isNotEmpty) {
                   ref.read(mediaListViewModelProvider.notifier).searchMedia(value);
                 }
