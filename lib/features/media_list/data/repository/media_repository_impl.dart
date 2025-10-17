@@ -15,4 +15,14 @@ class MediaRepositoryImpl implements MediaRepository {
       throw Exception('Failed to load media list: $error');
     }
   }
+
+  @override
+  Future<List<MediaEntity>> searchMedia({String query = '', int page = 1, String lang = 'en-US'}) async {
+    try {
+      final mediaModels = await _apiSource.searchMedia(query: query, page: page, lang: lang);
+      return mediaModels.map((model) => model.toEntity()).toList();
+    } catch (error) {
+      throw Exception('Failed to search media: $error');
+    }
+  }
 }
