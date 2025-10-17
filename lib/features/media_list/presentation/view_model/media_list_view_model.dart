@@ -13,18 +13,46 @@ final mediaListViewModelProvider =
       if (profileState is ProfileSet) {
         lang = profileState.user.language;
       }
-      return MediaListViewModel(locator<MediaRepository>(), lang: lang);
+      return MediaListViewModel(
+        repository: locator<MediaRepository>(),
+        lang: lang,
+        isHomeProvider: true, // Identifica que é o provider da home
+      );
+    });
+
+final recommendationsViewModelProvider =
+    StateNotifierProvider<MediaListViewModel, MediaListState>((ref) {
+      final profileState = ref.watch(completeProfileProvider);
+      String? lang;
+      if (profileState is ProfileSet) {
+        lang = profileState.user.language;
+      }
+      return MediaListViewModel(
+        repository: locator<MediaRepository>(),
+        lang: lang,
+        isHomeProvider: false, // Identifica que é o provider de recomendações
+      );
     });
 
 class MediaListViewModel extends StateNotifier<MediaListState> {
   final MediaRepository _repository;
   final String? lang;
+  final bool _isHomeProvider;
+
   int _page = 1;
   bool _isLoading = false;
 
-  MediaListViewModel(this._repository, {this.lang})
-    : super(MediaListInitial()) {
-    fetchMedia();
+  MediaListViewModel({
+    required MediaRepository repository,
+    this.lang,
+    required bool isHomeProvider,
+  }) : _repository = repository,
+       _isHomeProvider = isHomeProvider,
+       super(MediaListInitial()) {
+    // Só faz fetch automático se for o provider da home
+    if (_isHomeProvider) {
+      fetchMedia();
+    }
   }
 
   Future<void> fetchMedia() async {
@@ -68,28 +96,47 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     if (_isLoading) return;
     _isLoading = true;
 
-    print('Fetching media for recommendations: $recommendations');
+    print('=== FETCHING RECOMMENDATIONS ===');
+    print('Provider type: ${_isHomeProvider ? "HOME" : "RECOMMENDATIONS"}');
+    print('Recommendations: $recommendations');
 
     try {
+      state = MediaListLoading();
+
       final recommendedMedia = await _repository.getMediaDetails(
         recommendations,
       );
 
-      print('Fetched recommended media: $recommendedMedia');
+      print(
+        'Successfully fetched ${recommendedMedia.length} recommended media',
+      );
+      for (final media in recommendedMedia) {
+        print(
+          '  - ${media.title} | Poster: ${media.posterUrl != null ? "YES" : "NO"}',
+        );
+      }
 
       if (!mounted) return;
 
-      final currentMedia = state is MediaListLoaded
-          ? (state as MediaListLoaded).media
-          : <MediaEntity>[];
+      // SUBSTITUI a lista em vez de adicionar
+      state = MediaListLoaded(recommendedMedia, hasMore: false);
 
-      state = MediaListLoaded(currentMedia + recommendedMedia, hasMore: true);
+      print(
+        'Final state: MediaListLoaded with ${recommendedMedia.length} items',
+      );
     } catch (error) {
+      print('Error fetching recommendations: $error');
       if (mounted) {
         state = MediaListError(error.toString());
       }
     } finally {
       _isLoading = false;
     }
+  }
+
+  // Método para resetar completamente o estado
+  void resetState() {
+    _page = 1;
+    state = MediaListInitial();
   }
 }

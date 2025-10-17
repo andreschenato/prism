@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:prism/core/theme/app_theme.dart';
+import 'package:prism/features/media_list/domain/entities/media_entity.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import '../../data/llm_service.dart';
-import '../../data/llm_recommendation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
 import 'package:prism/core/widgets/horizontal_scroll_list.dart';
@@ -31,7 +31,6 @@ class RecommendationsResultView extends ConsumerStatefulWidget {
 class _RecommendationsResultViewState
     extends ConsumerState<RecommendationsResultView> {
   bool _loading = false;
-  List<LlmRecommendation> _recommendations = [];
 
   Future<void> _fetchAndDisplayRecommendations() async {
     setState(() => _loading = true);
@@ -57,9 +56,24 @@ class _RecommendationsResultViewState
 
       print('Recommendations: $mediaItems');
 
-      final mediaViewModel = ref.read(mediaListViewModelProvider.notifier);
-      await mediaViewModel.fetchMediaFromRecommendations(mediaItems);
+      // Reseta o provider antes de buscar novas recomendações
+      ref.invalidate(recommendationsViewModelProvider);
+
+      final recommendationsViewModel = ref.read(
+        recommendationsViewModelProvider.notifier,
+      );
+      await recommendationsViewModel.fetchMediaFromRecommendations(mediaItems);
+
+      // Debug: verifique o estado atual
+      final currentState = ref.read(recommendationsViewModelProvider);
+      if (currentState is MediaListLoaded) {
+        print('Successfully loaded ${currentState.media.length} media items');
+        for (final media in currentState.media) {
+          print('  - ${media.title} | Poster: ${media.posterUrl ?? "NO"}');
+        }
+      }
     } catch (e) {
+      print('Error fetching recommendations: $e');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error: $e')));
@@ -71,20 +85,28 @@ class _RecommendationsResultViewState
   @override
   void initState() {
     super.initState();
-    _fetchAndDisplayRecommendations();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchAndDisplayRecommendations();
+    });
   }
 
-  Widget _buildGrid(
+  Widget _buildRecommendationsGrid(
     BuildContext context,
-    MediaListLoaded state,
-    WidgetRef ref,
+    List<MediaEntity> mediaList,
   ) {
-    final components = state.media.map((media) {
+    if (mediaList.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final components = mediaList.map((media) {
       return MediaCard(
         label: media.title,
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => MediaGridPage(title: media.title),
+            builder: (context) => MediaGridPage(
+              title: media.title,
+              provider: recommendationsViewModelProvider,
+            ),
           ),
         ),
         iconPlaceholder: Icons.movie_creation_rounded,
@@ -96,109 +118,107 @@ class _RecommendationsResultViewState
     return HorizontalScrollList(components: components);
   }
 
+  Widget _buildContent() {
+    final state = ref.watch(recommendationsViewModelProvider);
+
+    // Debug do estado
+    print('Current recommendations state: ${state.runtimeType}');
+    if (state is MediaListLoaded) {
+      print('Media list length: ${state.media.length}');
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Summary', style: AppTextStyles.h2),
+        const SizedBox(height: 12),
+        Text(
+          'Genres: ${widget.genres.isEmpty ? 'Any' : widget.genres.join(', ')}',
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Countries: ${widget.countries.isEmpty ? 'Any' : widget.countries.join(', ')}',
+        ),
+        const SizedBox(height: 8),
+        Text('Eras: ${widget.eras.isEmpty ? 'Any' : widget.eras.join(', ')}'),
+        const SizedBox(height: 8),
+        Text(
+          'Languages: ${widget.languages.isEmpty ? 'Any' : widget.languages.join(', ')}',
+        ),
+        const SizedBox(height: 24),
+        Center(
+          child: ElevatedButton.icon(
+            icon: const Icon(Icons.send),
+            label: Text(
+              _loading ? 'Requesting...' : 'Get personalized recommendations',
+            ),
+            onPressed: _loading ? null : _fetchAndDisplayRecommendations,
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        if (_loading) const Center(child: CircularProgressIndicator()),
+
+        if (!_loading &&
+            state is MediaListLoaded &&
+            state.media.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('Recommended for you', style: AppTextStyles.h2),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => MediaGridPage(
+                            title: 'Recommendations',
+                            provider: recommendationsViewModelProvider,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'See all',
+                      style: TextStyle(
+                        color: AppColors.primaryLight,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 200,
+            child: _buildRecommendationsGrid(context, state.media),
+          ),
+        ],
+
+        if (!_loading && state is MediaListLoaded && state.media.isEmpty)
+          const Center(child: Text('No recommendations found')),
+
+        if (!_loading && state is MediaListError)
+          Center(child: Text('Error: ${state.message}')),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Recommendations')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Summary', style: AppTextStyles.h2),
-            const SizedBox(height: 12),
-            Text(
-              'Genres: ${widget.genres.isEmpty ? 'Any' : widget.genres.join(', ')}',
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Countries: ${widget.countries.isEmpty ? 'Any' : widget.countries.join(', ')}',
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Eras: ${widget.eras.isEmpty ? 'Any' : widget.eras.join(', ')}',
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Languages: ${widget.languages.isEmpty ? 'Any' : widget.languages.join(', ')}',
-            ),
-            const SizedBox(height: 24),
-            Center(
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.send),
-                label: Text(
-                  _loading
-                      ? 'Requesting...'
-                      : 'Get personalized recommendations',
-                ),
-                onPressed: _loading ? null : _fetchAndDisplayRecommendations,
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (_loading) const Center(child: CircularProgressIndicator()),
-            if (!_loading && _recommendations.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text('Recommendations', style: AppTextStyles.h2),
-              const SizedBox(height: 8),
-              Expanded(
-                child: ListView.separated(
-                  itemCount: _recommendations.length,
-                  separatorBuilder: (_, __) => const Divider(),
-                  itemBuilder: (context, i) {
-                    final r = _recommendations[i];
-                    return ListTile(
-                      title: Text(r.title),
-                      subtitle: Text('Type: ${r.type} id: ${r.id}'),
-                      onTap: () {
-                        // next step: lookup TMDB by title or id to fetch details
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text('Recommended for you', style: AppTextStyles.h2),
-                    const Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                MediaGridPage(title: 'Recommendations'),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'See all',
-                        style: TextStyle(
-                          color: AppColors.primaryLight,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 200,
-              child: _buildGrid(
-                context,
-                ref.watch(mediaListViewModelProvider) as MediaListLoaded,
-                ref,
-              ),
-            ),
-          ],
-        ),
+        child: _buildContent(),
       ),
     );
   }

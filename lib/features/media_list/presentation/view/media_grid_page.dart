@@ -8,9 +8,10 @@ import 'package:prism/features/media_list/presentation/view_model/media_list_sta
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
 
 class MediaGridPage extends ConsumerStatefulWidget {
-  const MediaGridPage({super.key, required this.title});
+  const MediaGridPage({super.key, required this.title, required this.provider});
 
   final String title;
+  final StateNotifierProvider<MediaListViewModel, MediaListState> provider;
 
   @override
   ConsumerState<MediaGridPage> createState() => _MediaGridPageState();
@@ -40,7 +41,7 @@ class _MediaGridPageState extends ConsumerState<MediaGridPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(mediaListViewModelProvider);
+    final state = ref.watch(widget.provider);
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),

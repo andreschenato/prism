@@ -86,8 +86,10 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) =>
-                                MediaGridPage(title: 'Recommendations'),
+                            builder: (context) => MediaGridPage(
+                              title: 'Recommendations',
+                              provider: recommendationsViewModelProvider,
+                            ),
                           ),
                         );
                       },
@@ -120,8 +122,11 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) =>
-                                MediaGridPage(title: 'Your Favorites'),
+                            builder: (context) => MediaGridPage(
+                              title: 'Your Favorites',
+                              provider:
+                                  mediaListViewModelProvider, // @todo: Create favoritesViewModelProvider,
+                            ),
                           ),
                         );
                       },
