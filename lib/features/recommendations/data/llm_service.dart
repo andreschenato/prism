@@ -21,7 +21,7 @@ class LlmService {
 
     final uri = Uri.parse('https://openrouter.ai/api/v1/chat/completions');
     final body = json.encode({
-      'model': 'google/gemini-2.0-flash-exp:free',
+      'model': 'google/gemini-2.5-flash-lite-preview-09-2025',
       'messages': [
         {'role': 'user', 'content': prompt},
       ],
@@ -37,10 +37,7 @@ class LlmService {
       body: body,
     );
 
-    // print('OpenRouter response: ${res.body}');
-
-    // final res =
-    //     "{\"id\":\"gen-1760556967-iMGfatYhQ5nZCr1RiYe9\",\"provider\":\"Google AI Studio\",\"model\":\"google/gemini-2.0-flash-exp:free\",\"object\":\"chat.completion\",\"created\":1760556967,\"choices\":[{\"logprobs\":null,\"finish_reason\":\"stop\",\"native_finish_reason\":\"STOP\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"[  {    \\\"title\\\": \\\"Cidade de Deus\\\",    \\\"id\\\": \\\"598\\\",    \\\"type\\\": \\\"movie\\\"  },  {    \\\"title\\\": \\\"Tropa de Elite\\\",    \\\"id\\\": \\\"7242\\\",    \\\"type\\\": \\\"movie\\\"  },  {    \\\"title\\\": \\\"Central do Brasil\\\",    \\\"id\\\": \\\"279\\\",    \\\"type\\\": \\\"movie\\\"  },  {    \\\"title\\\": \\\"O Quatrilho\\\",    \\\"id\\\": \\\"34882\\\",    \\\"type\\\": \\\"movie\\\"  }]\",\"refusal\":null,\"reasoning\":null}}],\"usage\":{\"prompt_tokens\":273,\"completion_tokens\":146,\"total_tokens\":419,\"prompt_tokens_details\":{\"cached_tokens\":0},\"completion_tokens_details\":{\"reasoning_tokens\":0,\"image_tokens\":0}}}";
+    print('OpenRouter response: ${res.body}');
 
     if (res.statusCode < 200 || res.statusCode >= 300) {
       throw Exception('OpenRouter API error: ${res.statusCode} ${res.body}');
@@ -55,7 +52,8 @@ class LlmService {
       throw Exception('Unexpected OpenRouter API response format');
     }
 
-    // parse JSON array or fallback to lines
+    print('OpenRouter API response: ${res.body}');
+
     try {
       final decoded = json.decode(text.isEmpty ? '[]' : text);
       if (decoded is List) {

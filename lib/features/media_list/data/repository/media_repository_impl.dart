@@ -27,7 +27,10 @@ class MediaRepositoryImpl implements MediaRepository {
       final mediaModels = await _apiSource.fetchMediaDetailsFromTMDB(
         recommendations,
       );
-      return mediaModels.map((model) => model.toEntity()).toList();
+
+      final validMedia = mediaModels.where((media) => media != null).toList();
+
+      return validMedia.map((model) => model.toEntity()).toList();
     } catch (error) {
       print('Error fetching media details: $error');
       throw Exception('Failed to load media details: $error');

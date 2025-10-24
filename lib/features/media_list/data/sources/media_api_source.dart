@@ -47,52 +47,72 @@ class MediaApiSource {
     print('Fetching media details for items: $mediaItems');
 
     // Cria todas as futures de uma vez
-    final List<Future<MediaResponseModel>> futures = mediaItems.map((
+    final List<Future<MediaResponseModel?>> futures = mediaItems.map((
       item,
     ) async {
       final id = item['id'];
       final type = item['type'];
-      if (id == null || type == null) {
+      final title = item['title'];
+
+      if (id == null || type == null || title == null) {
         throw Exception('Invalid media item: $item');
       }
 
-      final endpoint = type == 'movie' ? '/3/movie/$id' : '/3/tv/$id';
-
       try {
-        final media = await _apiClient.get(
-          endpoint,
+        // Primeiro tenta buscar por título
+        final encodedTitle = Uri.encodeComponent(title);
+        final searchEndpoint = type == 'movie'
+            ? '/3/search/movie?query=$encodedTitle&language=pt-BR'
+            : '/3/search/tv?query=$encodedTitle&language=pt-BR';
+
+        print('Searching for $type by title: $title');
+
+        final searchResults = await _apiClient.get(
+          searchEndpoint,
           headers: {'Authorization': 'Bearer $apiKey'},
         );
 
-        if (media == null) {
+        if (searchResults != null &&
+            searchResults['results'] != null &&
+            searchResults['results'].isNotEmpty) {
+          final firstResult = searchResults['results'][0];
           print(
-            'Media not found by ID, attempting search by title: ${item['title']}',
+            'Found by title: ${firstResult['title'] ?? firstResult['name']}',
           );
 
-          final searchResults = await _apiClient.get(
-            '/3/search/movie?query=${item['title']}',
-            headers: {'Authorization': 'Bearer $apiKey'},
-          );
-
-          if (searchResults != null &&
-              searchResults['results'] != null &&
-              searchResults['results'].isNotEmpty) {
-            final firstResult = searchResults['results'][0];
-            return MediaResponseModel.fromJson({...firstResult, 'type': type});
-          }
+          return MediaResponseModel.fromJson({...firstResult, 'type': type});
         }
 
-        print('Fetched individual media data: $media');
+        // Se não encontrou por título, tenta por ID (fallback)
+        print('Not found by title, trying by ID: $id');
 
-        return MediaResponseModel.fromJson({...media, 'type': type});
+        final idEndpoint = type == 'movie' ? '/3/movie/$id' : '/3/tv/$id';
+
+        final mediaById = await _apiClient.get(
+          idEndpoint,
+          headers: {'Authorization': 'Bearer $apiKey'},
+        );
+
+        if (mediaById != null) {
+          print('Found by ID: $id');
+          return MediaResponseModel.fromJson({...mediaById, 'type': type});
+        }
+
+        // Se ambos falharam
+        print('Media not found by title or ID: $title (ID: $id)');
+        return null;
       } catch (e) {
-        print('Error fetching media: $e');
-        rethrow;
+        print('Error fetching media "$title": $e');
+        return null;
       }
     }).toList();
 
-    // Executa todas as requisições em paralelo
-    final mediaList = await Future.wait(futures);
+    final results = await Future.wait(futures);
+    final mediaList = results.whereType<MediaResponseModel>().toList();
+
+    print(
+      'Successfully fetched ${mediaList.length} out of ${mediaItems.length} media items',
+    );
 
     return mediaList;
   }
