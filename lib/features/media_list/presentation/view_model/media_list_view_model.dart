@@ -13,19 +13,47 @@ final mediaListViewModelProvider =
       if (profileState is ProfileSet) {
         lang = profileState.user.language;
       }
-      return MediaListViewModel(locator<MediaRepository>(), lang: lang);
+      return MediaListViewModel(
+        repository: locator<MediaRepository>(),
+        lang: lang,
+        isHomeProvider: true, // Identifica que é o provider da home
+      );
+    });
+
+final recommendationsViewModelProvider =
+    StateNotifierProvider<MediaListViewModel, MediaListState>((ref) {
+      final profileState = ref.watch(completeProfileProvider);
+      String? lang;
+      if (profileState is ProfileSet) {
+        lang = profileState.user.language;
+      }
+      return MediaListViewModel(
+        repository: locator<MediaRepository>(),
+        lang: lang,
+        isHomeProvider: false, // Identifica que é o provider de recomendações
+      );
     });
 
 class MediaListViewModel extends StateNotifier<MediaListState> {
   final MediaRepository _repository;
   final String? lang;
+  final bool _isHomeProvider;
+
   int _page = 1;
   bool _isLoading = false;
   String? _currentQuery;
 
-  MediaListViewModel(this._repository, {this.lang})
-    : super(MediaListInitial()) {
-    fetchMedia();
+  MediaListViewModel({
+    required MediaRepository repository,
+    this.lang,
+    required bool isHomeProvider,
+  }) : _repository = repository,
+       _isHomeProvider = isHomeProvider,
+       super(MediaListInitial()) {
+    // Só faz fetch automático se for o provider da home
+    if (_isHomeProvider) {
+      fetchMedia();
+    }
   }
 
   Future<void> fetchMedia() async {
@@ -33,9 +61,9 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     _isLoading = true;
 
     try {
-        final currentMedia = state is MediaListLoaded
-      ? (state as MediaListLoaded).media
-      : <MediaEntity>[];
+      final currentMedia = state is MediaListLoaded
+          ? (state as MediaListLoaded).media
+          : <MediaEntity>[];
 
       if (_page == 1 && _currentQuery != null) {
         state = MediaListLoading();
@@ -62,9 +90,7 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
         state = MediaListLoaded(currentMedia, hasMore: false);
       } else {
         _page++;
-        final fullList = (_page == 2)
-            ? newMedia
-            : currentMedia + newMedia;
+        final fullList = (_page == 2) ? newMedia : currentMedia + newMedia;
         state = MediaListLoaded(fullList, hasMore: true);
       }
     } catch (error) {
@@ -76,6 +102,56 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     }
   }
 
+  Future<void> fetchMediaFromRecommendations(
+    List<Map<String, String>> recommendations,
+  ) async {
+    if (_isLoading) return;
+    _isLoading = true;
+
+    print('=== FETCHING RECOMMENDATIONS ===');
+    print('Provider type: ${_isHomeProvider ? "HOME" : "RECOMMENDATIONS"}');
+    print('Recommendations: $recommendations');
+
+    try {
+      state = MediaListLoading();
+
+      final recommendedMedia = await _repository.getMediaDetails(
+        recommendations,
+      );
+
+      print(
+        'Successfully fetched ${recommendedMedia.length} recommended media',
+      );
+      for (final media in recommendedMedia) {
+        print(
+          '  - ${media.title} | Poster: ${media.posterUrl != null ? "YES" : "NO"}',
+        );
+      }
+
+      if (!mounted) return;
+
+      // SUBSTITUI a lista em vez de adicionar
+      state = MediaListLoaded(recommendedMedia, hasMore: false);
+
+      print(
+        'Final state: MediaListLoaded with ${recommendedMedia.length} items',
+      );
+    } catch (error) {
+      print('Error fetching recommendations: $error');
+      if (mounted) {
+        state = MediaListError(error.toString());
+      }
+    } finally {
+      _isLoading = false;
+    }
+  }
+
+  // Método para resetar completamente o estado
+  void resetState() {
+    _page = 1;
+    state = MediaListInitial();
+  }
+
   Future<void> searchMedia(String query) async {
     if (_currentQuery == query) return;
 
@@ -83,7 +159,7 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     _currentQuery = query;
     state = MediaListLoading();
     await fetchMedia();
-  }  
+  }
 
   Future<void> clearSearch() async {
     if (_currentQuery == null) return;

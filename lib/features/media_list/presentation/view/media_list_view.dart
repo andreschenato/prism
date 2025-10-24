@@ -5,6 +5,7 @@ import 'package:prism/core/widgets/button.dart';
 import 'package:prism/core/widgets/horizontal_scroll_list.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view/media_grid_page.dart';
+import 'package:prism/features/recommendations/presentation/view/recommendations_wizard_view.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
 import 'package:prism/core/theme/app_theme.dart';
@@ -62,7 +63,13 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
               label: 'Get new recommendations',
               iconData: Icons.auto_awesome,
               width: 160,
-              onPressed: () => {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RecommendationsWizardView(),
+                  ),
+                );
+              },
             ),
             SizedBox(
               width: double.infinity,
@@ -79,8 +86,10 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                       onTap: () async {
                         await Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) =>
-                                MediaGridPage(title: 'Recommendations'),
+                            builder: (context) => MediaGridPage(
+                              title: 'Recommendations',
+                              provider: recommendationsViewModelProvider,
+                            ),
                           ),
                         );
                       ref.read(mediaListViewModelProvider.notifier).clearSearch();
@@ -114,8 +123,11 @@ class _MediaListViewState extends ConsumerState<MediaListView> {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) =>
-                                MediaGridPage(title: 'Your Favorites'),
+                            builder: (context) => MediaGridPage(
+                              title: 'Your Favorites',
+                              provider:
+                                  mediaListViewModelProvider, // @todo: Create favoritesViewModelProvider,
+                            ),
                           ),
                         );
                       },
