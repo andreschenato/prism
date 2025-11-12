@@ -74,7 +74,7 @@ class MediaListView extends ConsumerWidget {
                               builder: (context) => MediaGridPage(
                                 title: 'All',
                                 provider:
-                                    providers.recommendationsViewModelProvider,
+                                    providers.mediaListViewModelProvider,
                               ),
                             ),
                           );
