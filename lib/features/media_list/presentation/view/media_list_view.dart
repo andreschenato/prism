@@ -6,6 +6,7 @@ import 'package:prism/core/widgets/horizontal_scroll_list.dart';
 import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view/favorites_list_view.dart';
 import 'package:prism/features/media_list/presentation/view/media_grid_page.dart';
+import 'package:prism/features/recommendations/presentation/view/recommendations_wizard_view.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart'
     as providers;
@@ -47,7 +48,13 @@ class MediaListView extends ConsumerWidget {
               label: 'Get new recommendations',
               iconData: Icons.auto_awesome,
               width: 160,
-              onPressed: () => {},
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RecommendationsWizardView(),
+                  ),
+                );
+              },
             ),
             SizedBox(
               width: double.infinity,
@@ -57,22 +64,20 @@ class MediaListView extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text('Perfect for you', style: AppTextStyles.h2),
-              
+
                       const Spacer(),
-              
+
                       GestureDetector(
                         onTap: () async {
                           await Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  MediaGridPage(title: 'All'),
+                              builder: (context) => MediaGridPage(
+                                title: 'All',
+                                provider:
+                                    providers.recommendationsViewModelProvider,
+                              ),
                             ),
                           );
-                          ref
-                              .read(
-                                providers.mediaListViewModelProvider.notifier,
-                              )
-                              .clearSearch();
                         },
                         child: Text(
                           'See all',
@@ -101,9 +106,9 @@ class MediaListView extends ConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text('Your Favorites', style: AppTextStyles.h2),
-                
+
                         const Spacer(),
-                
+
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(

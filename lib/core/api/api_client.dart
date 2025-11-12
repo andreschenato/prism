@@ -29,6 +29,12 @@ class ApiClient {
       throw ApiException('No Internet connection', 0);
     } on HttpException {
       throw ApiException('Could not find the server', 0);
+    } on ApiException catch (e) {
+      if (e.statusCode == 404) {
+        print('Resource not found: $endpoint');
+        return null; // Return null for 404 errors to allow fallback logic
+      }
+      rethrow; // Re-throw other ApiExceptions
     } catch (e) {
       throw ApiException('An unknown error occurred: $e', 0);
     }
