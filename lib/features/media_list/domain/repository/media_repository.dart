@@ -4,4 +4,5 @@ abstract class MediaRepository {
   Future<List<MediaEntity>> getMedia({int page = 1, String lang = 'en-US'});
   Future<List<MediaEntity>> searchMedia({String query, int page = 1, String lang = 'en-US'});
   Future<List<MediaEntity>> getFavorites();
+  Future<List<MediaEntity>> searchFavorite(String text);
 }

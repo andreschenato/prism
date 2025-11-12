@@ -18,6 +18,7 @@ class FavoritesListView extends ConsumerStatefulWidget {
 
 class _FavoritesListViewState extends ConsumerState<FavoritesListView> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _FavoritesListViewState extends ConsumerState<FavoritesListView> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -46,15 +48,27 @@ class _FavoritesListViewState extends ConsumerState<FavoritesListView> {
       appBar: AppBar(title: Text(widget.title)),
       body: Column(
         children: [
-          // SizedBox(
-          //   height: 80,
-          //   child: CustomSearchBar(
-          //     hintText: 'Search ${widget.title}',
-          //     onChanged: (value) {
-          //       // TODO: Implement search functionality
-          //     },
-          //   ),
-          // ),
+          SizedBox(
+            height: 80,
+            child: CustomSearchBar(
+              controller: _searchController,
+              hintText: 'Search ${widget.title}',
+              onChanged: (value) {
+                if (value.isEmpty) {
+                  ref
+                      .read(favoritesListViewModelProvider.notifier)
+                      .fetchFavorites();
+                }
+              },
+              onSubmitted: (value) {
+                if (value.isNotEmpty) {
+                  ref
+                      .read(favoritesListViewModelProvider.notifier)
+                      .fetchFavorites(text: value);
+                }
+              },
+            ),
+          ),
           Expanded(child: _buildBody(context, state)),
         ],
       ),

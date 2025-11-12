@@ -15,7 +15,49 @@ class FavoritesSource {
     List<MediaEntity> media = [];
 
     for (var m in movies.docs) {
-     MediaEntity movie = MediaEntity(
+      MediaEntity movie = MediaEntity(
+        id: int.parse(m.id),
+        title: m.get("title"),
+        type: "movie",
+        posterUrl: m.get("poster_url"),
+      );
+
+      media.add(movie);
+    }
+
+    for (var t in tv.docs) {
+      MediaEntity tv = MediaEntity(
+        id: int.parse(t.id),
+        title: t.get("title"),
+        type: "tv",
+        posterUrl: t.get("poster_url"),
+      );
+
+      media.add(tv);
+    }
+
+    return media;
+  }
+
+  Future<List<MediaEntity>> searchMedia(String text) async {
+    final user = _firestore.collection('users').doc(_user?.uid);
+
+    String lowerTitle = text.toLowerCase();
+    List<String> searchTerms = lowerTitle.split(' ');
+
+    final movies = await user
+        .collection('movie')
+        .where('search_terms', arrayContainsAny: searchTerms)
+        .get();
+    final tv = await user
+        .collection('tv')
+        .where('search_terms', arrayContainsAny: searchTerms)
+        .get();
+
+    List<MediaEntity> media = [];
+
+    for (var m in movies.docs) {
+      MediaEntity movie = MediaEntity(
         id: int.parse(m.id),
         title: m.get("title"),
         type: "movie",

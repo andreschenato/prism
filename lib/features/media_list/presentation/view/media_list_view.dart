@@ -7,7 +7,8 @@ import 'package:prism/core/widgets/media_card.dart';
 import 'package:prism/features/media_list/presentation/view/favorites_list_view.dart';
 import 'package:prism/features/media_list/presentation/view/media_grid_page.dart';
 import 'package:prism/features/media_list/presentation/view_model/media_list_state.dart';
-import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart' as providers;
+import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart'
+    as providers;
 import 'package:prism/core/theme/app_theme.dart';
 
 class MediaListView extends ConsumerWidget {
@@ -18,11 +19,19 @@ class MediaListView extends ConsumerWidget {
     final genericState = ref.watch(providers.mediaListViewModelProvider);
     final favoritesState = ref.watch(providers.favoritesListViewModelProvider);
 
-    return Scaffold(body: _buildBody(context, genericState, favoritesState, ref));
+    return Scaffold(
+      body: _buildBody(context, genericState, favoritesState, ref),
+    );
   }
 
-  Widget _buildBody(BuildContext context, MediaListState genericState, MediaListState favoritesState, WidgetRef ref) {
-    if (genericState is MediaListLoading || favoritesState is MediaListLoading) {
+  Widget _buildBody(
+    BuildContext context,
+    MediaListState genericState,
+    MediaListState favoritesState,
+    WidgetRef ref,
+  ) {
+    if (genericState is MediaListLoading ||
+        favoritesState is MediaListLoading) {
       return const Center(child: CircularProgressIndicator());
     }
     if (genericState is MediaListLoaded && favoritesState is MediaListLoaded) {
@@ -42,73 +51,84 @@ class MediaListView extends ConsumerWidget {
             ),
             SizedBox(
               width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text('Perfect for you', style: AppTextStyles.h2),
-
-                    const Spacer(),
-
-                    GestureDetector(
-                      onTap: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                MediaGridPage(title: 'Recommendations'),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('Perfect for you', style: AppTextStyles.h2),
+              
+                      const Spacer(),
+              
+                      GestureDetector(
+                        onTap: () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  MediaGridPage(title: 'All'),
+                            ),
+                          );
+                          ref
+                              .read(
+                                providers.mediaListViewModelProvider.notifier,
+                              )
+                              .clearSearch();
+                        },
+                        child: Text(
+                          'See all',
+                          style: TextStyle(
+                            color: AppColors.primaryLight,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
-                        );
-                      ref.read(providers.mediaListViewModelProvider.notifier).clearSearch();
-                      },
-                      child: Text(
-                        'See all',
-                        style: TextStyle(
-                          color: AppColors.primaryLight,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
+                    ],
+                  ),
+                  _buildGrid(context, genericState),
+                ],
+              ),
+            ),
+            Visibility(
+              visible: favoritesState.media.isNotEmpty,
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('Your Favorites', style: AppTextStyles.h2),
+                
+                        const Spacer(),
+                
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    FavoritesListView(title: 'Your Favorites'),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'See all',
+                            style: TextStyle(
+                              color: AppColors.primaryLight,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                    _buildGrid(context, favoritesState),
                   ],
                 ),
               ),
             ),
-            _buildGrid(context, genericState),
-            SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text('Your Favorites', style: AppTextStyles.h2),
-
-                    const Spacer(),
-
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                FavoritesListView(title: 'Your Favorites'),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'See all',
-                        style: TextStyle(
-                          color: AppColors.primaryLight,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            _buildGrid(context, favoritesState),
           ],
         ),
       );
@@ -117,7 +137,11 @@ class MediaListView extends ConsumerWidget {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('Error loading items: ${genericState.message} and ${favoritesState.message}')],
+          children: [
+            Text(
+              'Error loading items: ${genericState.message} and ${favoritesState.message}',
+            ),
+          ],
         ),
       );
     }

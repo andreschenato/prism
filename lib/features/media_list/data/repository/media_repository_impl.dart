@@ -48,4 +48,14 @@ class MediaRepositoryImpl implements MediaRepository {
       throw Exception('Failed to search media: $error');
     }
   }
+
+  @override
+  Future<List<MediaEntity>> searchFavorite(String text) async {
+    try {
+      final favorites = await _favoritesSource.searchMedia(text);
+      return favorites;
+    } catch (error) {
+      throw Exception('Failed to load favorites list: $error');
+    }
+  }
 }

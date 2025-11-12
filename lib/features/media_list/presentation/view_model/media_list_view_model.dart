@@ -40,13 +40,14 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
   final MediaRepository _repository;
   final String? lang;
   final String? type;
+  final String? searchText;
   int _page = 1;
   bool _isLoading = false;
   String? _currentQuery;
 
-  MediaListViewModel(this._repository, {this.lang, this.type})
+  MediaListViewModel(this._repository, {this.lang, this.type, this.searchText})
     : super(MediaListInitial()) {
-    type == "favorites" ? fetchFavorites() : fetchMedia();
+    type == "favorites" ? fetchFavorites(text: searchText) : fetchMedia();
   }
 
   Future<void> fetchMedia() async {
@@ -95,7 +96,7 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     }
   }
 
-  Future<void> fetchFavorites() async {
+  Future<void> fetchFavorites({String? text}) async {
     if (_isLoading) return;
     _isLoading = true;
 
@@ -104,7 +105,9 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
       //   state = MediaListLoading();
       // }
 
-      final favorites = await _repository.getFavorites();
+      final favorites = text != null && text.isNotEmpty
+        ? await _repository.searchFavorite(text)
+        : await _repository.getFavorites();
 
       if (!mounted) return;
 
