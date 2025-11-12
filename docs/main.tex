@@ -1,0 +1,59 @@
+% !TEX root = main.tex
+\documentclass[12pt]{article}
+\usepackage{styles/sbc-template}
+\usepackage[utf8]{inputenc}
+
+\usepackage{graphicx,url}
+\usepackage{dirtree}
+\usepackage{float}
+
+\sloppy
+
+\title{Prism\\ Sistema de recomendação de filmes}
+
+\author{
+André Vítor Barbosa Schenato -- \textnormal{103586@aluno.uricer.edu.br}\inst{1}
+\\Henri A. Grzegozeski -- \textnormal{104114@aluno.uricer.edu.br}\inst{2} 
+\\Levi da Rosa Gomes -- \textnormal{103495@aluno.uricer.edu.br}\inst{3} 
+\\Ruan Dalla Rosa -- \textnormal{103423@aluno.uricer.edu.br}\inst{4}
+}
+
+\address{Universidade Regional Integrada do Alto Uruguai e das Missões – Campus Erechim\\
+Erechim -- RS -- Brazil}
+
+\begin{document}
+
+\maketitle
+
+\begin{resumo}
+O presente trabalho apresenta o desenvolvimento do \textit{Prism}, uma aplicação mobile voltada à recomendação personalizada de filmes, com o objetivo de otimizar o processo de descoberta de conteúdo audiovisual em plataformas de streaming. A solução foi construída com base em tecnologias modernas e escaláveis, utilizando o framework \textbf{Flutter} para o front-end e o \textbf{Firebase} como infraestrutura de back-end, integrando serviços como \textit{Authentication}, \textit{Cloud Firestore} e \textit{Cloud Functions} em \textbf{Node.js}. Para enriquecer a experiência do usuário, o sistema estabelece conexão com a \textbf{IMDb API} para obtenção de metadados e com uma \textbf{API de Inteligência Artificial}, como o \textbf{Gemini}, responsável por interpretar preferências e gerar recomendações personalizadas por meio de processamento de linguagem natural. O \textit{Prism} busca oferecer uma navegação intuitiva, com telas desenvolvidas no \textbf{Figma}, e uma experiência de uso consistente entre diferentes dispositivos. O resultado é uma aplicação funcional, segura e com potencial de expansão, que demonstra a viabilidade do uso combinado entre IA generativa e tecnologias \textit{serverless} na criação de sistemas de recomendação modernos e eficientes.
+\end{resumo}
+
+\noindent\textbf{Palavras-chave:} Recomendação de filmes; Inteligência Artificial; Flutter; Firebase; Node.js.
+
+\input{chapters/1-introducao.tex}
+
+\input{chapters/4-ref_teorico.tex}
+
+\input{chapters/5-metodologia.tex}
+
+\input{chapters/6-desenvolvimento.tex}
+
+\input{chapters/7-resultados_discussoes.tex}
+
+\input{chapters/9-conclusao.tex}
+
+\section*{Referências}
+\textbf{Figma}. Página inicial do Figma. Disponível em: \url{https://www.figma.com/pt-br/}. Acesso em: 1 set. 2025.\\
+\textbf{Flutter}. Documentação oficial do Flutter. Disponível em: \url{https://docs.flutter.dev/}. Acesso em: 1 set. 2025.\\
+\textbf{GitHub Docs}. Sobre o GitHub e o Git. Disponível em: \url{https://docs.github.com/pt/get-started/start-your-journey/about-github-and-git}. Acesso em: 20 ago. 2025.\\
+\textbf{Google}. Firebase: Ampliar o Cloud Firestore com o Cloud Functions. Disponível em: \url{https://firebase.google.com/docs/firestore/extend-with-functions?hl=pt-br}. Acesso em: 5 set. 2025.\\
+\textbf{IMDb}. IMDb API: Visão geral e aplicações. Disponível em: \url{https://developer.imdb.com/documentation/api-documentation/}. Acesso em: 5 set. 2025.\\
+\textbf{Node.js Foundation}. Documentação oficial da API Node.js. Disponível em: \url{https://nodejs.org/docs/latest/api/}. Acesso em: 5 set. 2025.\\
+\textbf{Google DeepMind}. Gemini API: Documentação oficial. Disponível em: \url{https://ai.google.dev/docs}. Acesso em: 10 out. 2025.
+
+
+
+
+
+\end{document}

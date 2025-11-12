@@ -1,0 +1,94 @@
+\section{Desenvolvimento}
+A seguir, são apresentados os aspectos técnicos da implementação do sistema, abrangendo sua arquitetura, estrutura interna, funcionalidades desenvolvidas e decisões tomadas ao longo do processo de construção.
+
+\subsection{Arquitetura do Sistema}
+O sistema adota uma arquitetura em camadas, baseada na separação entre as responsabilidades de \textit{frontend}, \textit{backend} e serviços externos. Essa estrutura visa garantir escalabilidade, modularidade e facilidade de manutenção. 
+
+A aplicação é composta por três principais camadas: 
+\begin{itemize}
+    \item \textbf{Camada de Apresentação (\textit{Frontend})} — desenvolvida em \textit{Flutter}, responsável pela interface gráfica e pela interação direta com o usuário;
+    \item \textbf{Camada de Lógica e Processamento (\textit{Backend})} — implementada sobre a infraestrutura do \textit{Firebase}, utilizando \textit{Cloud Functions} escritas em \textit{Node.js} para o processamento de dados e execução das regras de negócio;
+    \item \textbf{Camada de Integração} — responsável pela comunicação com \textit{APIs} externas, como a \textit{IMDb API} e as \textit{APIs} de Inteligência Artificial (IA), que enriquecem a base de dados e aprimoram as recomendações de filmes.
+\end{itemize}
+
+\begin{figure}[H] \centering \includegraphics[width=0.8\textwidth]{images/diagrama-arquiteura.png} \caption{Arquitetura do Sistema \textit{Prism}} \label{fig:diagrama-arquitetura} \end{figure}
+
+Essa arquitetura proporciona um fluxo de dados contínuo e seguro entre o cliente e o servidor, aproveitando os recursos \textit{serverless} do \textit{Firebase} para reduzir custos e simplificar a escalabilidade. A escolha dessa estrutura se deve à necessidade de integrar diferentes serviços em nuvem de forma eficiente, mantendo desempenho elevado e baixo acoplamento entre os módulos.
+
+\subsection{Estrutura do \textit{Backend}}
+A organização interna do \textit{backend} segue os princípios de modularização e reutilização de código, com foco na integração nativa entre os serviços do \textit{Firebase}. As principais tecnologias utilizadas incluem o \textit{Firebase Authentication}, o \textit{Cloud Firestore} e as \textit{Cloud Functions}.
+
+Cada módulo contém:
+\begin{itemize}
+    \item Registro do módulo com dependências e provedores (\textit{*.module.ts});
+    \item Funções assíncronas para manipulação de dados e integração com o \textit{Firestore};
+    \item \textit{Triggers} automáticas que respondem a eventos do banco de dados, como inserções ou atualizações de registros;
+    \item \textit{Middleware} de autenticação que valida o \textit{token} do usuário antes de permitir qualquer operação sensível.
+\end{itemize}
+
+A implementação em \textit{Node.js} aproveita o modelo de I/O não bloqueante (\textit{non-blocking I/O}) para lidar com múltiplas requisições simultâneas, mantendo o desempenho e reduzindo a latência. As \textit{Cloud Functions} atuam como o principal ponto de processamento das recomendações e de sincronização dos dados, sendo disparadas automaticamente conforme as interações do usuário.
+
+\subsection{\textit{Frontend} e Experiência do Usuário}
+A interface do usuário foi implementada como uma aplicação móvel \textit{multiplataforma}, desenvolvida com o \textit{framework Flutter} e a linguagem \textit{Dart}. Essa escolha permitiu que o sistema fosse executado tanto em dispositivos \textit{Android} quanto \textit{iOS}, mantendo uma experiência consistente.
+
+O design das telas foi prototipado no \textit{Figma}, seguindo boas práticas de \textit{UX/UI} e aplicando o conceito de interface intuitiva e responsiva. O uso do \textit{Hot Reload} do \textit{Flutter} acelerou o desenvolvimento e os testes, permitindo ajustes visuais em tempo real.
+
+As principais telas do sistema \textit{Prism} estão apresentadas a seguir.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/login.png}
+        \caption*{(a) Tela de Login e Cadastro}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/inicial.png}
+        \caption*{(b) Tela Inicial}
+    \end{minipage}
+    
+    \label{fig:telas-login-inicial}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/detalhes.png}
+        \caption*{(a) Tela de Detalhes do Filme}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/favorito.png}
+        \caption*{(b) Tela de Favoritos}
+    \end{minipage}
+   
+    \label{fig:telas-detalhes-favoritos}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{images/perfil.png}
+    \caption{Tela de Perfil do Usuário.}
+    \label{fig:tela-perfil}
+\end{figure}
+
+\subsection{Integração com \textit{APIs} Externas}
+A integração com \textit{APIs} externas constitui um dos principais diferenciais do \textit{Prism}. O sistema se conecta à \textbf{\textit{API IMDb}}, que fornece metadados de filmes e séries, e a uma \textbf{\textit{API} de Inteligência Artificial} (\textit{Gemini} ou \textit{Claude}), utilizada para processar linguagem natural e compreender o contexto das solicitações do usuário.
+
+Essa integração é feita por meio de requisições \textit{HTTPS} autenticadas e tratadas nas \textit{Cloud Functions}, que interpretam as respostas e estruturam os dados para exibição no aplicativo. Com isso, o sistema consegue gerar recomendações contextuais, identificar padrões de preferência e exibir informações detalhadas e atualizadas diretamente das fontes oficiais.
+
+\subsection{Banco de Dados e Persistência}
+A persistência de dados é gerenciada via \textbf{\textit{Cloud Firestore}}, um banco de dados \textit{NoSQL} em tempo real oferecido pelo \textit{Firebase}. Os dados são organizados em coleções e documentos, permitindo a estruturação dinâmica das informações de usuários, filmes e recomendações.
+
+Além disso, o \textit{Firestore} oferece sincronização automática e suporte \textit{offline}, garantindo que o aplicativo continue funcional mesmo sem conexão estável com a internet. A modelagem ER apresentada na Figura~\ref{fig:modelo-er} demonstra a relação entre as coleções do sistema e a forma como os dados são interligados.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/modelo-er.png}
+    \caption{Modelo ER do Banco de Dados}
+    \label{fig:modelo-er}
+\end{figure}
