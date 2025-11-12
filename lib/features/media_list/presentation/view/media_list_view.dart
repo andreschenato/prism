@@ -73,11 +73,15 @@ class MediaListView extends ConsumerWidget {
                             MaterialPageRoute(
                               builder: (context) => MediaGridPage(
                                 title: 'All',
-                                provider:
-                                    providers.mediaListViewModelProvider,
+                                provider: providers.mediaListViewModelProvider,
                               ),
                             ),
                           );
+                          ref
+                              .read(
+                                providers.mediaListViewModelProvider.notifier,
+                              )
+                              .clearSearch();
                         },
                         child: Text(
                           'See all',
