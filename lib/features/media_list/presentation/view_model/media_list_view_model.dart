@@ -101,26 +101,13 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     _isLoading = true;
 
     try {
-      // if (_page == 1) {
-      //   state = MediaListLoading();
-      // }
-
       final favorites = text != null && text.isNotEmpty
         ? await _repository.searchFavorite(text)
         : await _repository.getFavorites();
 
       if (!mounted) return;
 
-      // final currentMedia = state is MediaListLoaded
-      //     ? (state as MediaListLoaded).media
-      //     : <MediaEntity>[];
-
-      // if (favorites.isEmpty) {
       state = MediaListLoaded(favorites, hasMore: false);
-      // } else {
-      //   _page++;
-      //   state = MediaListLoaded(currentMedia + favorites, hasMore: true);
-      // }
     } catch (error) {
       if (mounted) {
         state = MediaListError(error.toString());
