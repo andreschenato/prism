@@ -10,6 +10,7 @@ import 'package:prism/features/complete_profile/presentation/view/complete_profi
 import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_state.dart';
 import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_view_model.dart';
 import 'package:prism/features/details/presentation/view/details_view.dart';
+import 'package:prism/features/media_list/presentation/view/favorites_list_view.dart';
 import 'package:prism/features/media_list/presentation/view/media_list_view.dart';
 import 'package:prism/features/settings/presentation/view/settings_view.dart';
 
@@ -76,7 +77,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: '/favorites',
                 name: AppRoutes.favorites.name,
                 builder: (context, state) => const Center(
-                  child: Text('Favorites Page', style: TextStyle(fontSize: 24)),
+                  child: FavoritesListView(title: "Your Favorites"),
                 ),
               ),
             ],

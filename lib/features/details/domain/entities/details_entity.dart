@@ -13,6 +13,7 @@ class DetailsEntity {
   final List<PersonEntity> writers;
   final List<PersonEntity> actors;
   final List<SeasonEntity>? seasons;
+  final bool? isFavorite;
 
   DetailsEntity({
     required this.id,
@@ -26,5 +27,6 @@ class DetailsEntity {
     required this.writers,
     required this.actors,
     this.seasons,
+    this.isFavorite = false,
   });
 }

@@ -10,6 +10,7 @@ import 'package:prism/core/widgets/mini_card.dart';
 import 'package:prism/features/details/domain/entities/details_entity.dart';
 import 'package:prism/features/details/presentation/view_model/details_state.dart';
 import 'package:prism/features/details/presentation/view_model/details_view_model.dart';
+import 'package:prism/features/media_list/presentation/view_model/media_list_view_model.dart';
 
 class DetailsView extends ConsumerWidget {
   final String mediaId;
@@ -21,15 +22,24 @@ class DetailsView extends ConsumerWidget {
     final params = DetailsProviderParams(mediaId: mediaId, type: type);
     final state = ref.watch(detailsViewModelProvider(params));
 
-    return Scaffold(appBar: AppBar(title: Text('Details'),), body: _buildBody(context, state, ref));
+    return Scaffold(
+      appBar: AppBar(title: Text('Details')),
+      body: _buildBody(context, state, ref, params),
+    );
   }
 
-  Widget _buildBody(BuildContext context, DetailsState state, WidgetRef ref) {
+  Widget _buildBody(
+    BuildContext context,
+    DetailsState state,
+    WidgetRef ref,
+    DetailsProviderParams params,
+  ) {
     if (state is DetailsLoading) {
       return const Center(child: CircularProgressIndicator());
     }
     if (state is DetailsLoaded) {
       var media = state.media;
+
       return Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -51,24 +61,34 @@ class DetailsView extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomIconButton(
-                    icon: Icons.favorite, 
+                    color: media.isFavorite! ? AppColors.primaryDark : null,
+                    icon: Icons.favorite,
                     onPressed: () {
-                    // TODO: Implement favorite functionality
-                    }, 
+                      ref
+                          .read(detailsViewModelProvider(params).notifier)
+                          .favoriteMedia(
+                            media.posterUrl!,
+                            media.id,
+                            type,
+                            media.title,
+                          );
+
+                      ref.invalidate(favoritesListViewModelProvider);
+                    },
                     label: 'Favorite',
                   ),
                   CustomIconButton(
-                    icon: Icons.movie, 
+                    icon: Icons.movie,
                     onPressed: () {
                       // TODO: Implement trailer functionality
-                    }, 
+                    },
                     label: 'Trailer',
                   ),
                   CustomIconButton(
-                    icon: Icons.share, 
+                    icon: Icons.share,
                     onPressed: () {
                       // TODO: Implement share functionality
-                    }, 
+                    },
                     label: 'Share',
                   ),
                 ],

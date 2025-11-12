@@ -2,8 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prism/core/config/locator.dart';
 import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_state.dart';
 import 'package:prism/features/complete_profile/presentation/view_model/complete_profile_view_model.dart';
+import 'package:prism/features/details/domain/entities/details_entity.dart';
 import 'package:prism/features/details/domain/repository/details_repository.dart';
 import 'package:prism/features/details/presentation/view_model/details_state.dart';
+import 'package:prism/features/media_list/domain/entities/media_entity.dart';
 
 class DetailsProviderParams {
   final String mediaId;
@@ -70,5 +72,51 @@ class DetailsViewModel extends StateNotifier<DetailsState> {
         state = DetailsError(error.toString());
       }
     }
+  }
+
+  Future<MediaEntity?> favoriteMedia(
+    String poster,
+    int id,
+    String type,
+    String title,
+  ) async {
+    try {
+      final favorited = await _repository.favoriteMedia(
+        id,
+        poster,
+        type,
+        title,
+      );
+
+      final currentState = state;
+      if (currentState is DetailsLoaded) {
+        final media = currentState.media;
+
+        var updatedMedia = DetailsEntity(
+          id: media.id,
+          title: media.title,
+          plot: media.plot,
+          posterUrl: media.posterUrl,
+          genres: media.genres,
+          startYear: media.startYear,
+          endYear: media.endYear,
+          directors: media.directors,
+          writers: media.writers,
+          actors: media.actors,
+          seasons: media.seasons,
+          isFavorite: !media.isFavorite!,
+        );
+
+        state = DetailsLoaded(updatedMedia);
+      }
+
+      return favorited;
+    } catch (error) {
+      if (mounted) {
+        state = DetailsError(error.toString());
+      }
+    }
+
+    return null;
   }
 }

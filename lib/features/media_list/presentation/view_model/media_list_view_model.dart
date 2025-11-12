@@ -16,7 +16,25 @@ final mediaListViewModelProvider =
       return MediaListViewModel(
         repository: locator<MediaRepository>(),
         lang: lang,
-        isHomeProvider: true, // Identifica que é o provider da home
+        type: "list",
+        isHomeProvider: true,
+      );
+    });
+
+final favoritesListViewModelProvider =
+    StateNotifierProvider.autoDispose<MediaListViewModel, MediaListState>((
+      ref,
+    ) {
+      final profileState = ref.watch(completeProfileProvider);
+      String? lang;
+      if (profileState is ProfileSet) {
+        lang = profileState.user.language;
+      }
+      return MediaListViewModel(
+        repository: locator<MediaRepository>(),
+        lang: lang,
+        type: "favorites",
+        isHomeProvider: true,
       );
     });
 
@@ -30,13 +48,15 @@ final recommendationsViewModelProvider =
       return MediaListViewModel(
         repository: locator<MediaRepository>(),
         lang: lang,
-        isHomeProvider: false, // Identifica que é o provider de recomendações
+        isHomeProvider: false,
       );
     });
 
 class MediaListViewModel extends StateNotifier<MediaListState> {
   final MediaRepository _repository;
   final String? lang;
+  final String? type;
+  final String? searchText;
   final bool _isHomeProvider;
 
   int _page = 1;
@@ -46,13 +66,14 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
   MediaListViewModel({
     required MediaRepository repository,
     this.lang,
+    this.type,
+    this.searchText,
     required bool isHomeProvider,
   }) : _repository = repository,
        _isHomeProvider = isHomeProvider,
        super(MediaListInitial()) {
-    // Só faz fetch automático se for o provider da home
     if (_isHomeProvider) {
-      fetchMedia();
+      type == "favorites" ? fetchFavorites(text: searchText) : fetchMedia();
     }
   }
 
@@ -102,6 +123,27 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     }
   }
 
+  Future<void> fetchFavorites({String? text}) async {
+    if (_isLoading) return;
+    _isLoading = true;
+
+    try {
+      final favorites = text != null && text.isNotEmpty
+          ? await _repository.searchFavorite(text)
+          : await _repository.getFavorites();
+
+      if (!mounted) return;
+
+      state = MediaListLoaded(favorites, hasMore: false);
+    } catch (error) {
+      if (mounted) {
+        state = MediaListError(error.toString());
+      }
+    } finally {
+      _isLoading = false;
+    }
+  }
+
   Future<void> fetchMediaFromRecommendations(
     List<Map<String, String>> recommendations,
   ) async {
@@ -130,7 +172,6 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
 
       if (!mounted) return;
 
-      // SUBSTITUI a lista em vez de adicionar
       state = MediaListLoaded(recommendedMedia, hasMore: false);
 
       print(
@@ -146,7 +187,6 @@ class MediaListViewModel extends StateNotifier<MediaListState> {
     }
   }
 
-  // Método para resetar completamente o estado
   void resetState() {
     _page = 1;
     state = MediaListInitial();
