@@ -1,32 +1,49 @@
 \section{Desenvolvimento}
-A seguir, são apresentados os aspectos técnicos da implementação do sistema, abrangendo sua arquitetura, estrutura interna, funcionalidades desenvolvidas e decisões tomadas ao longo do processo de construção.
+
+A seguir, são apresentados os aspectos técnicos da implementação do sistema, abrangendo sua arquitetura, estrutura interna, funcionalidades desenvolvidas e decisões adotadas ao longo do processo de construção.
 
 \subsection{Arquitetura do Sistema}
-O sistema adota uma arquitetura em camadas, baseada na separação entre as responsabilidades de \textit{frontend}, \textit{backend} e serviços externos. Essa estrutura visa garantir escalabilidade, modularidade e facilidade de manutenção. 
 
-A aplicação é composta por três principais camadas: 
+O \textit{Prism} adota uma arquitetura modular estruturada em camadas, com divisão clara entre apresentação, processamento e integração externa. Essa abordagem favorece a escalabilidade, o isolamento de responsabilidades e a manutenção contínua do projeto.
+
+A aplicação é organizada da seguinte forma:
+
 \begin{itemize}
-    \item \textbf{Camada de Apresentação (\textit{Frontend})} — desenvolvida em \textit{Flutter}, responsável pela interface gráfica e pela interação direta com o usuário;
-    \item \textbf{Camada de Lógica e Processamento (\textit{Backend})} — implementada sobre a infraestrutura do \textit{Firebase}, utilizando \textit{Cloud Functions} escritas em \textit{Node.js} para o processamento de dados e execução das regras de negócio;
-    \item \textbf{Camada de Integração} — responsável pela comunicação com \textit{APIs} externas, como a \textit{IMDb API} e as \textit{APIs} de Inteligência Artificial (IA), que enriquecem a base de dados e aprimoram as recomendações de filmes.
+    \item \textbf{Camada de Apresentação (\textit{Frontend})} — implementada em \textit{Flutter}, responsável pela interface visual, navegação e interação direta com o usuário. Essa camada se comunica com os serviços de autenticação e banco de dados do \textit{Firebase} para acessar perfis, preferências e listas personalizadas;
+    
+    \item \textbf{Camada de Dados e Autenticação} — composta pelo \textit{Firebase Authentication} e pelo \textit{Cloud Firestore}. Essa camada gerencia informações como perfis de usuário, preferências, histórico e favoritos, atuando como a base de persistência da aplicação;
+    
+    \item \textbf{Camada de Processamento (\textit{Backend})} — formada pelo mecanismo interno de recomendação, o \textit{Recommender Engine}, responsável por interpretar os dados armazenados, consolidar preferências e organizar o fluxo de consulta aos serviços externos;
+    
+    \item \textbf{Camada de Integração} — responsável pela comunicação com a \textit{TMDb API}, utilizada para coleta de metadados de filmes e séries, e com a \textit{OpenRouter API}, que fornece modelos de \textit{IA} capazes de interpretar preferências em linguagem natural e gerar sugestões personalizadas.
 \end{itemize}
 
-\begin{figure}[H] \centering \includegraphics[width=0.8\textwidth]{images/diagrama-arquiteura.png} \caption{Arquitetura do Sistema \textit{Prism}} \label{fig:diagrama-arquitetura} \end{figure}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{images/diagrama-arquiteura.png}
+\caption{Arquitetura do Sistema \textit{Prism}}
+\label{fig:diagrama-arquitetura}
+\end{figure}
 
-Essa arquitetura proporciona um fluxo de dados contínuo e seguro entre o cliente e o servidor, aproveitando os recursos \textit{serverless} do \textit{Firebase} para reduzir custos e simplificar a escalabilidade. A escolha dessa estrutura se deve à necessidade de integrar diferentes serviços em nuvem de forma eficiente, mantendo desempenho elevado e baixo acoplamento entre os módulos.
+Essa arquitetura permite um fluxo contínuo entre cliente, serviços de dados e mecanismos de recomendação. O aplicativo móvel interage com o \textit{Firestore} e com o \textit{Recommender Engine}, enquanto a camada de integração fornece respostas enriquecidas obtidas a partir das \textit{APIs} externas. Dessa forma, o sistema combina o ecossistema \textit{Firebase} com fontes externas especializadas, permitindo recomendações contextualizadas, baixo acoplamento entre módulos e expansão futura sem comprometer o desempenho.
 
-\subsection{Estrutura do \textit{Backend}}
-A organização interna do \textit{backend} segue os princípios de modularização e reutilização de código, com foco na integração nativa entre os serviços do \textit{Firebase}. As principais tecnologias utilizadas incluem o \textit{Firebase Authentication}, o \textit{Cloud Firestore} e as \textit{Cloud Functions}.
+\subsection{Estrutura da Aplicação}
 
-Cada módulo contém:
+A estrutura interna do projeto segue uma organização modular, típica de aplicações \textit{Flutter} de médio porte, separando de forma explícita as responsabilidades de configuração, navegação, serviços, componentes visuais e funcionalidades. Essa divisão reduz acoplamento, facilita testes e permite evolução incremental dos módulos.
+
+A pasta \texttt{core/} concentra os elementos centrais da aplicação: o cliente HTTP usado para comunicação com as APIs externas (\texttt{api/api\_client.dart}), as configurações de inicialização do \textit{Firebase}, o gerenciador de dependências via \textit{service locator}, o roteamento global e o tema visual. Também abriga o conjunto de \textit{widgets} reutilizáveis, que padronizam a interface e reduzem duplicações.
+
+As funcionalidades de domínio são agrupadas em \texttt{features/}, cada uma contendo suas camadas de \textit{data}, \textit{domain} e \textit{presentation}, seguindo um modelo inspirado em \textit{clean architecture}. Entre os módulos mais relevantes destacam-se:
 \begin{itemize}
-    \item Registro do módulo com dependências e provedores (\textit{*.module.ts});
-    \item Funções assíncronas para manipulação de dados e integração com o \textit{Firestore};
-    \item \textit{Triggers} automáticas que respondem a eventos do banco de dados, como inserções ou atualizações de registros;
-    \item \textit{Middleware} de autenticação que valida o \textit{token} do usuário antes de permitir qualquer operação sensível.
+    \item \textbf{Auth} — responsável por autenticação, integrando o \textit{Firebase Authentication} via fontes de dados e repositórios dedicados;
+    \item \textbf{Complete Profile} — gerencia preferências iniciais do usuário, como gêneros, idiomas e país, utilizando fontes do \textit{Firestore};
+    \item \textbf{Media List} e \textbf{Details} — realizam consultas à \textit{TMDb API}, tratam modelos de mídia e expõem as informações para as telas de listagem e detalhes;
+    \item \textbf{Recommendations} — módulo que interage com a \textit{OpenRouter API} e implementa a lógica do mecanismo de recomendação;
+    \item \textbf{Settings} — responsável pelas telas de configurações e informações da conta.
 \end{itemize}
 
-A implementação em \textit{Node.js} aproveita o modelo de I/O não bloqueante (\textit{non-blocking I/O}) para lidar com múltiplas requisições simultâneas, mantendo o desempenho e reduzindo a latência. As \textit{Cloud Functions} atuam como o principal ponto de processamento das recomendações e de sincronização dos dados, sendo disparadas automaticamente conforme as interações do usuário.
+Arquivos como \texttt{main.dart}, \texttt{app.dart} e \texttt{firebase\_options.dart} compõem o ponto de entrada da aplicação, inicializando provedores, configurando o ambiente do \textit{Firebase} e montando a estrutura básica do aplicativo.
+
 
 \subsection{\textit{Frontend} e Experiência do Usuário}
 A interface do usuário foi implementada como uma aplicação móvel \textit{multiplataforma}, desenvolvida com o \textit{framework Flutter} e a linguagem \textit{Dart}. Essa escolha permitiu que o sistema fosse executado tanto em dispositivos \textit{Android} quanto \textit{iOS}, mantendo uma experiência consistente.
@@ -77,18 +94,14 @@ As principais telas do sistema \textit{Prism} estão apresentadas a seguir.
 \end{figure}
 
 \subsection{Integração com \textit{APIs} Externas}
-A integração com \textit{APIs} externas constitui um dos principais diferenciais do \textit{Prism}. O sistema se conecta à \textbf{\textit{API IMDb}}, que fornece metadados de filmes e séries, e a uma \textbf{\textit{API} de Inteligência Artificial} (\textit{Gemini} ou \textit{Claude}), utilizada para processar linguagem natural e compreender o contexto das solicitações do usuário.
+O \textit{Prism} consome duas fontes externas principais: uma \textbf{\textit{API} de catálogo audiovisual} (para obtenção de metadados de filmes, séries e artistas) e uma \textbf{\textit{API} de Inteligência Artificial}, responsável por interpretar linguagem natural e auxiliar na geração de recomendações personalizadas.
 
-Essa integração é feita por meio de requisições \textit{HTTPS} autenticadas e tratadas nas \textit{Cloud Functions}, que interpretam as respostas e estruturam os dados para exibição no aplicativo. Com isso, o sistema consegue gerar recomendações contextuais, identificar padrões de preferência e exibir informações detalhadas e atualizadas diretamente das fontes oficiais.
+Essas integrações ocorrem diretamente no aplicativo, por meio do módulo \texttt{core/api/api\_client.dart}, que centraliza as requisições \textit{HTTPS}, gerencia autenticação, cabeçalhos e parse das respostas. Os módulos de \textit{features} utilizam fontes específicas (\textit{sources}) para acessar endpoints distintos, mantendo o isolamento entre camadas e facilitando testes e evolução futura.
+
+O serviço de IA é utilizado para analisar descrições inseridas pelo usuário, interpretar preferências declaradas e construir um contexto unificado de recomendação. Já o serviço de catálogo retorna dados estruturados sobre mídias, temporadas, atores e informações relacionadas.
 
 \subsection{Banco de Dados e Persistência}
-A persistência de dados é gerenciada via \textbf{\textit{Cloud Firestore}}, um banco de dados \textit{NoSQL} em tempo real oferecido pelo \textit{Firebase}. Os dados são organizados em coleções e documentos, permitindo a estruturação dinâmica das informações de usuários, filmes e recomendações.
+A persistência é realizada pelo \textbf{\textit{Cloud Firestore}}, que armazena perfis, preferências, listas de itens favoritos e registros produzidos durante o fluxo de recomendações. Cada módulo do aplicativo acessa o banco por meio de suas respectivas fontes de dados dedicadas, como \texttt{profile\_firestore\_source.dart} ou \texttt{favorite\_source.dart}.
 
-Além disso, o \textit{Firestore} oferece sincronização automática e suporte \textit{offline}, garantindo que o aplicativo continue funcional mesmo sem conexão estável com a internet. A modelagem ER apresentada na Figura~\ref{fig:modelo-er} demonstra a relação entre as coleções do sistema e a forma como os dados são interligados.
+O modelo segue a estrutura de coleções típica do Firestore, permitindo organização flexível dos dados e sincronização em tempo real. O suporte nativo a operações \textit{offline} garante continuidade do uso mesmo quando não há conexão estável. Todas as coleções e seus relacionamentos lógicos já estão representados no diagrama geral do sistema.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{images/modelo-er.png}
-    \caption{Modelo ER do Banco de Dados}
-    \label{fig:modelo-er}
-\end{figure}

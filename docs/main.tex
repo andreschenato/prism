@@ -19,17 +19,18 @@ André Vítor Barbosa Schenato -- \textnormal{103586@aluno.uricer.edu.br}\inst{1
 }
 
 \address{Universidade Regional Integrada do Alto Uruguai e das Missões – Campus Erechim\\
-Erechim -- RS -- Brazil}
+Erechim -- RS -- Brasil}
 
 \begin{document}
 
 \maketitle
 
 \begin{resumo}
-O presente trabalho apresenta o desenvolvimento do \textit{Prism}, uma aplicação mobile voltada à recomendação personalizada de filmes, com o objetivo de otimizar o processo de descoberta de conteúdo audiovisual em plataformas de streaming. A solução foi construída com base em tecnologias modernas e escaláveis, utilizando o framework \textbf{Flutter} para o front-end e o \textbf{Firebase} como infraestrutura de back-end, integrando serviços como \textit{Authentication}, \textit{Cloud Firestore} e \textit{Cloud Functions} em \textbf{Node.js}. Para enriquecer a experiência do usuário, o sistema estabelece conexão com a \textbf{IMDb API} para obtenção de metadados e com uma \textbf{API de Inteligência Artificial}, como o \textbf{Gemini}, responsável por interpretar preferências e gerar recomendações personalizadas por meio de processamento de linguagem natural. O \textit{Prism} busca oferecer uma navegação intuitiva, com telas desenvolvidas no \textbf{Figma}, e uma experiência de uso consistente entre diferentes dispositivos. O resultado é uma aplicação funcional, segura e com potencial de expansão, que demonstra a viabilidade do uso combinado entre IA generativa e tecnologias \textit{serverless} na criação de sistemas de recomendação modernos e eficientes.
+O presente trabalho descreve o desenvolvimento do \textit{Prism}, uma aplicação mobile voltada à recomendação personalizada de filmes, projetada para facilitar a descoberta de conteúdo em plataformas de streaming. A solução utiliza o framework \textbf{Flutter} para a construção da interface e adota o \textbf{Firebase} como infraestrutura de back-end, integrando serviços como \textit{Authentication} e \textit{Cloud Firestore}. Para ampliar a qualidade das sugestões, o sistema consome metadados da \textbf{TMDb API} e emprega a LLM \textbf{Gemini Flash 2.5}, acessada por meio do \textbf{OpenRouter}, responsável por interpretar preferências do usuário e gerar recomendações com técnicas de linguagem natural. As telas foram projetadas no \textbf{Figma}, garantindo uma navegação clara e consistente entre dispositivos. O resultado é uma aplicação funcional, segura e escalável, que demonstra a viabilidade da integração entre IA generativa e tecnologias \textit{serverless} na construção de sistemas modernos de recomendação.
 \end{resumo}
 
-\noindent\textbf{Palavras-chave:} Recomendação de filmes; Inteligência Artificial; Flutter; Firebase; Node.js.
+
+\noindent\textbf{Palavras-chave:} Recomendação de filmes; Inteligência Artificial; Flutter; Firebase;
 
 \input{chapters/1-introducao.tex}
 
@@ -48,8 +49,7 @@ O presente trabalho apresenta o desenvolvimento do \textit{Prism}, uma aplicaç�
 \textbf{Flutter}. Documentação oficial do Flutter. Disponível em: \url{https://docs.flutter.dev/}. Acesso em: 1 set. 2025.\\
 \textbf{GitHub Docs}. Sobre o GitHub e o Git. Disponível em: \url{https://docs.github.com/pt/get-started/start-your-journey/about-github-and-git}. Acesso em: 20 ago. 2025.\\
 \textbf{Google}. Firebase: Ampliar o Cloud Firestore com o Cloud Functions. Disponível em: \url{https://firebase.google.com/docs/firestore/extend-with-functions?hl=pt-br}. Acesso em: 5 set. 2025.\\
-\textbf{IMDb}. IMDb API: Visão geral e aplicações. Disponível em: \url{https://developer.imdb.com/documentation/api-documentation/}. Acesso em: 5 set. 2025.\\
-\textbf{Node.js Foundation}. Documentação oficial da API Node.js. Disponível em: \url{https://nodejs.org/docs/latest/api/}. Acesso em: 5 set. 2025.\\
+\textbf{The Movie Database}. TMDB API: Visão geral e aplicações. Disponível em: \url{https://developer.themoviedb.org/reference/intro/getting-started}. Acesso em: 5 set. 2025.\\
 \textbf{Google DeepMind}. Gemini API: Documentação oficial. Disponível em: \url{https://ai.google.dev/docs}. Acesso em: 10 out. 2025.
 
 
