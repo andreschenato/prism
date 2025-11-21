@@ -15,8 +15,8 @@ class CompleteProfileRepositoryImpl implements CompleteProfileRepository {
     String country,
     String language,
     String userId,
-  ) {
-    return _firestoreSource.setUserProfilePreferences(
+  ) async {
+    return await _firestoreSource.setUserProfilePreferences(
       genreIds,
       country,
       language,
