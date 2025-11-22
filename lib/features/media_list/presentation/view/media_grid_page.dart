@@ -41,6 +41,10 @@ class _MediaGridPageState extends ConsumerState<MediaGridPage> {
     }
   }
 
+  Future<void> _onRefresh() async {
+    await ref.read(mediaListViewModelProvider.notifier).fetchMedia();
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(widget.provider);
@@ -61,7 +65,9 @@ class _MediaGridPageState extends ConsumerState<MediaGridPage> {
               },
               onSubmitted: (value) {
                 if (value.isNotEmpty) {
-                  ref.read(mediaListViewModelProvider.notifier).searchMedia(value);
+                  ref
+                      .read(mediaListViewModelProvider.notifier)
+                      .searchMedia(value);
                 }
               },
             ),
@@ -99,21 +105,25 @@ class _MediaGridPageState extends ConsumerState<MediaGridPage> {
   }
 
   Widget _buildGrid(BuildContext context, MediaListLoaded state) {
-    return ListBuilder(
-      controller: _scrollController,
-      itemBuilder: (context, index) {
-        final media = state.media[index];
-        return MediaCard(
-          label: media.title,
-          onPressed: () => context.go('/media/${media.id}?type=${media.type}'),
-          iconPlaceholder: Icons.movie_creation_rounded,
-          imageUrl: media.posterUrl,
-          displayLabel: false,
-        );
-      },
-      itemCount: state.media.length,
-      axisCount: 3,
-      contentHeight: 180,
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: ListBuilder(
+        controller: _scrollController,
+        itemBuilder: (context, index) {
+          final media = state.media[index];
+          return MediaCard(
+            label: media.title,
+            onPressed: () =>
+                context.go('/media/${media.id}?type=${media.type}'),
+            iconPlaceholder: Icons.movie_creation_rounded,
+            imageUrl: media.posterUrl,
+            displayLabel: false,
+          );
+        },
+        itemCount: state.media.length,
+        axisCount: 3,
+        contentHeight: 180,
+      ),
     );
   }
 }

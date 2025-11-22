@@ -40,6 +40,10 @@ class _FavoritesListViewState extends ConsumerState<FavoritesListView> {
     }
   }
 
+  Future<void> _onRefresh() async {
+    await ref.read(favoritesListViewModelProvider.notifier).fetchFavorites();
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(favoritesListViewModelProvider);
@@ -98,26 +102,30 @@ class _FavoritesListViewState extends ConsumerState<FavoritesListView> {
         ),
       );
     }
-    return const Center(child: Text('Press button to load more media'));
+    return const Center(child: Text('No favorites'));
   }
 
   Widget _buildGrid(BuildContext context, MediaListLoaded state) {
-    return ListBuilder(
-      controller: _scrollController,
-      itemBuilder: (context, index) {
-        final media = state.media[index];
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: ListBuilder(
+        controller: _scrollController,
+        itemBuilder: (context, index) {
+          final media = state.media[index];
 
-        return MediaCard(
-          label: media.title,
-          onPressed: () => context.go('/media/${media.id}?type=${media.type}'),
-          iconPlaceholder: Icons.movie_creation_rounded,
-          imageUrl: media.posterUrl,
-          displayLabel: false,
-        );
-      },
-      itemCount: state.media.length,
-      axisCount: 3,
-      contentHeight: 180,
+          return MediaCard(
+            label: media.title,
+            onPressed: () =>
+                context.go('/media/${media.id}?type=${media.type}'),
+            iconPlaceholder: Icons.movie_creation_rounded,
+            imageUrl: media.posterUrl,
+            displayLabel: false,
+          );
+        },
+        itemCount: state.media.length,
+        axisCount: 3,
+        contentHeight: 180,
+      ),
     );
   }
 }
